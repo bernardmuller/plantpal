@@ -21,7 +21,7 @@ jobs:
               uses: docker/build-push-action@v5
               with:
                   context: ./lib/main
-                  file: Dockerfile
+                  file: ./lib/main/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/fly-app:latest
 
