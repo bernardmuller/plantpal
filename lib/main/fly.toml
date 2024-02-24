@@ -1,10 +1,12 @@
-# fly.toml app configuration file generated for my-domain-app on 2024-02-24T15:27:42+02:00
+# fly.toml app configuration file generated for my-domain-app-muddy-haze-8196 on 2024-02-24T18:07:06+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'my-domain-app'
+app = 'my-domain-app-muddy-haze-8196'
 primary_region = 'jnb'
+
+[build]
 
 [http_service]
   internal_port = 8080
