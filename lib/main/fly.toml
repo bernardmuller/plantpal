@@ -3,7 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'domain-app'
+app = 'my-domain-app'
 primary_region = 'jnb'
 
 [http_service]
