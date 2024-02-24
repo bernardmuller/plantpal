@@ -25,11 +25,14 @@ jobs:
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
 
-            - name: Deploy to Fly
-              runs-on: ubuntu-latest
-              concurrency: deploy-group
-              uses: actions/checkout@v3
-              uses: superfly/flyctl-actions/setup-flyctl@master
-              run: flyctl deploy --remote-only -a my-domain-app-muddy-haze-8196
-              env: 
-                FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    deploy:
+        name: Deploy main
+        depends-on: build
+        runs-on: ubuntu-latest
+        concurrency: deploy-group
+        steps:
+            - uses: actions/checkout@v3
+            - uses: superfly/flyctl-actions/setup-flyctl@master
+            - run: flyctl deploy --remote-only -a my-domain-app-muddy-haze-8196
+              env:
+                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
