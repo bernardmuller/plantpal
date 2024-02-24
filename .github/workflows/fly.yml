@@ -25,9 +25,18 @@ jobs:
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
 
+    Run tests:
+        name: Run tests
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Run tests
+              run: cd ./lib/main && go test
+
     deploy:
         name: Deploy to Fly
-        needs: build
+        needs: Run tests
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4

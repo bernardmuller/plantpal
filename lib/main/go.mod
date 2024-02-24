@@ -1,3 +1,3 @@
-module github.com/fly-apps/go-example
+module github.com/bernardmuller/domain-app
 
 go 1.16

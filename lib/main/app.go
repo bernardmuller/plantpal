@@ -13,6 +13,10 @@ var resources embed.FS
 
 var t = template.Must(template.ParseFS(resources, "templates/*"))
 
+func fly_away() string {
+  return "Fly!"
+}
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
