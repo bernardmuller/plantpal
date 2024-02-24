@@ -36,7 +36,7 @@ jobs:
 
     deploy:
         name: Deploy to Fly
-        needs: Run tests
+        needs: run_tests
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
