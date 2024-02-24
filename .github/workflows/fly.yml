@@ -25,7 +25,7 @@ jobs:
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
 
-    Run tests:
+    run_tests:
         name: Run tests
         needs: build
         runs-on: ubuntu-latest
