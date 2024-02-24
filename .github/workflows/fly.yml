@@ -23,7 +23,7 @@ jobs:
                   context: ./lib/main
                   file: ./lib/main/Dockerfile
                   push: true
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/fly-app:latest
+                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
 
     deploy:
         name: Deploy main
