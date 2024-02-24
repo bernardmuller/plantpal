@@ -23,7 +23,8 @@ jobs:
             - name: Build and push
               working-directory: ./lib/main
               run: |
-                  docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest .
+                  docker buildx build --platform linux/amd64 -t domain-app:latest .
+                  docker tag domain-app:latest ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
                   docker push ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
 
     deploy:
