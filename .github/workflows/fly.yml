@@ -19,9 +19,9 @@ jobs:
 
             - name: Build and push
               uses: docker/build-push-action@v5
-              working-directory: ./lib/main
               with:
-                  file: ./Dockerfile
+                  context: .
+                  file: ./lib/main/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/fly-app:latest
 
