@@ -26,6 +26,5 @@ jobs:
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
 
             - name: Deploy to Fly
-              uses: superfly/flyctl-actions/deploy@master
               with:
                   run: flyctl deploy --remote-only -a my-domain-app-muddy-haze-8196
