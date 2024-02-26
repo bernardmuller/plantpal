@@ -6,7 +6,7 @@ import (
 )
 
 func TestFly(t *testing.T) {
-    string := "Run!"
+    string := "Fly!"
     want := regexp.MustCompile(string)
     msg := fly_away()
     if !want.MatchString(msg) {
