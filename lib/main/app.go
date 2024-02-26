@@ -21,8 +21,8 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
-
 	}
+
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := map[string]string{
@@ -31,6 +31,7 @@ func main() {
 
 		t.ExecuteTemplate(w, "index.html.tmpl", data)
 	})
+
 
 	log.Println("listening on", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
