@@ -35,12 +35,11 @@ jobs:
               run: cd ./lib/main && go test
 
     test_db_connection:
-        name: Test test-database connection
+        name: Test database connection
         needs: build
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - name: Test database connection
             - run: cd ./lib/main/db && go test
               env:
                   TEST_DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
