@@ -32,13 +32,13 @@ jobs:
         name: Run tests
         needs: build
         runs-on: ubuntu-latest
+        env:
+            TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+            TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
         steps:
             - uses: actions/checkout@v4
             - name: Run tests
               run: cd ./lib/main && go test
-              env:
-                  TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
-                  TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
 
     test_db_connection:
         name: Test database connection
