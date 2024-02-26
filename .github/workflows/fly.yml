@@ -24,6 +24,9 @@ jobs:
                   file: ./lib/main/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
+              env:
+                  TEST_DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+                  TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
 
     run_tests:
         name: Run tests
