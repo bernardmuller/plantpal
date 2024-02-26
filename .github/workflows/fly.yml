@@ -5,6 +5,9 @@ on:
             - main
 jobs:
     build:
+        env:
+            TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+            TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
         name: Build and push Docker image
         runs-on: ubuntu-latest
         steps:
@@ -25,9 +28,8 @@ jobs:
                   file: ./lib/main/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
-              env:
-                  TEST_DATABASE_URL: "${{ secrets.TEST_DATABASE_URL }}"
-                  TURSO_AUTH_TOKEN: "${{ secrets.TURSO_AUTH_TOKEN }}"
+                  TEST_DATABASE_URL: "$TEST_DATABASE_URL"
+                  TURSO_AUTH_TOKEN: "$TURSO_AUTH_TOKEN"
 
     run_tests:
         name: Run tests
