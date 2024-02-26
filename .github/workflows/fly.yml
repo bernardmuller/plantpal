@@ -46,7 +46,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - run: cd ./lib/main/db && go test
+            - run: cd ./lib/main/db && TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }} TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }} go test -v ./...
 
     deploy:
         name: Deploy to Fly
