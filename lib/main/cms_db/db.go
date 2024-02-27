@@ -31,12 +31,3 @@ func disconnect_cms_db(client *mongo.Client) error {
 	}
 	return nil
 }
-
-func main() {
-	client, err := connect_cms_db()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Connected to MongoDB!")
-	defer disconnect_cms_db(client)
-}
