@@ -27,6 +27,7 @@ jobs:
                   build-args: |
                       "TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}"
                       "TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }}"
+                      "MONGODB_URI=${{ secrets.MONGODB_URI }}"
 
     run_tests:
         name: Run tests
@@ -47,6 +48,14 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - run: cd ./lib/main/db && TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }} TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }} go test -v ./...
+
+    test_cms_db_connection:
+        name: Test CMS database connection
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - run: cd ./lib/main/cms_db && MONGODB_URI=${{ secrets.MONGODB_URI }} go test -v ./...
 
     deploy:
         name: Deploy to Fly
