@@ -30,7 +30,7 @@ jobs:
 
     run_tests:
         name: Run tests
-        needs: build
+        needs: test_db_connection
         runs-on: ubuntu-latest
         env:
             TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
