@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func connect_cms_db() (*mongo.Client, error) {
+func Connect_cms_db() (*mongo.Client, error) {
 	// uri := os.Getenv("MONGODB_URI")
 	uri := "mongodb+srv://bernarmuller:@C8PF7RngnA2CX*@portal.eooko63.mongodb.net/?retryWrites=true&w=majority&appName=portal"
 	if uri == "" {
@@ -24,7 +24,7 @@ func connect_cms_db() (*mongo.Client, error) {
 	return client, nil
 }
 
-func disconnect_cms_db(client *mongo.Client) error {
+func Disconnect_cms_db(client *mongo.Client) error {
 	if err := client.Disconnect(context.TODO()); err != nil {
 		return err
 	}

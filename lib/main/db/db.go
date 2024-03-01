@@ -8,7 +8,7 @@ import (
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
-func connect_db() (*sql.DB, error) {
+func Connect_db() (*sql.DB, error) {
 	database_name := os.Getenv("TEST_DATABASE_URL")
 	auth_token := os.Getenv("TURSO_AUTH_TOKEN")
 
