@@ -2,7 +2,7 @@ package cms_db
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -10,10 +10,9 @@ import (
 )
 
 func connect_cms_db() (*mongo.Client, error) {
-
 	uri := os.Getenv("MONGODB_URI")
 	if uri == "" {
-		log.Fatal("You must set your 'MONGODB_URI' environment variable.")
+		return nil, fmt.Errorf("MONGODB_URI environment variables must be set")
 	}
 
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))

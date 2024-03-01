@@ -1,4 +1,4 @@
-name: Fly Deploy
+name: Domain App Pipeline
 on:
     push:
         branches:
@@ -55,7 +55,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - run: cd ./lib/main/cms_db && MONGODB_URI=${{ secrets.MONGODB_URI }} go test 
+            - run: cd ./lib/main/cms_db && MONGODB_URI=${{ secrets.MONGODB_URI }} go test -v
 
     deploy:
         name: Deploy to Fly
