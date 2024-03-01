@@ -5,8 +5,8 @@ import (
 )
 
 func TestDBConnection(t *testing.T) {
-  _, err := connect_db()
-  if err != nil {
-    t.Fatalf(`db_connect() = %s`, err)
-  }
+	_, err := Connect_db()
+	if err != nil {
+		t.Fatalf(`db_connect() = %s`, err)
+	}
 }
