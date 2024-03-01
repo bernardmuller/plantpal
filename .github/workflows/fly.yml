@@ -43,11 +43,11 @@ jobs:
 
     test_cms_db_connection:
         name: Test CMS database connection
-        needs: test_db_connection
+        needs: build
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - run: ls -al ./lib/main
+            - run: ls -al ./lib/main/cms_db
             - run: cd ./lib/main/cms_db && MONGODB_URI=${{ secrets.MONGODB_URI }} go test -v
 
     test_db_connection:
