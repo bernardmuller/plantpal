@@ -1,4 +1,4 @@
-package cms_db
+package db
 
 import (
 	"context"
