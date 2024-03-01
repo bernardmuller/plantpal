@@ -5,8 +5,10 @@ import (
 )
 
 func TestCMSDBConnection(t *testing.T) {
-	_, err := connect_cms_db()
+	db, err := connect_cms_db()
 	if err != nil {
 		t.Fatalf(`db_connect() = %s`, err)
 	}
+
+  disconnect_cms_db(db)
 }
