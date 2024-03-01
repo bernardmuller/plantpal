@@ -13,6 +13,7 @@ ENV MONGODB_URI=$MONGODB_URI
 COPY go.mod go.sum ./
 
 RUN go mod download
+RUN go env -w GO111MODULE=auto
 
 COPY . .
 
