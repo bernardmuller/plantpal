@@ -6,8 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"./db"
 )
 
 //go:embed templates/*
@@ -32,8 +30,6 @@ func main() {
 
 		t.ExecuteTemplate(w, "index.html.tmpl", data)
 	})
-
-	db, err := connect_db()
 
 	log.Println("listening on", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
