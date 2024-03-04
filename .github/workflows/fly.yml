@@ -17,12 +17,7 @@ jobs:
                   go-version: "1.21.x"
 
             - name: Build the app
-              run: cd ./lib/main && go build -v ./... -o domain-app
-              with:
-                  env:
-                      TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
-                      TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
-                      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+              run: cd ./lib/main && TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }} TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }} MONGODB_URI=${{ secrets.MONGODB_URI }} go build -v ./... -o domain-app
 
     run_tests:
         name: Run tests
