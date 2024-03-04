@@ -2,7 +2,7 @@ package main
 
 import (
 	"embed"
-	"fmt"
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -15,6 +15,11 @@ import (
 var resources embed.FS
 
 var t = template.Must(template.ParseFS(resources, "templates/*"))
+
+type Response struct {
+	Ok      bool   `json:"ok"`
+	Message string `json:"message"`
+}
 
 func fly_away() string {
 	return "Fly!"
@@ -37,13 +42,18 @@ func main() {
 	http.HandleFunc("/health-check", func(w http.ResponseWriter, r *http.Request) {
 		_, err := db.Connect_db()
 		if err != nil {
-			fmt.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
+			response := Response{Ok: false, Message: "Error connecting to database."}
+
+			js, _ := json.Marshal(response)
+			w.Header().Add("Content-Type", "application/json")
+			w.Write(js)
 		}
 
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "Hello %s!\n", fly_away())
+		response := Response{Ok: true, Message: "All good!"}
+
+		js, _ := json.Marshal(response)
+		w.Header().Add("Content-Type", "application/json")
+		w.Write(js)
 	})
 
 	log.Println("listening on", port)
