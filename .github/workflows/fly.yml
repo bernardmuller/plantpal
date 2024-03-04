@@ -4,21 +4,47 @@ on:
         branches:
             - main
 jobs:
-    build:
-        name: Build
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - name: Set up Go
-              uses: actions/setup-go@v2
-              with:
-                  go-version: 1.16
-            - name: Build
-              run: go build -o ./lib/main ./lib/main
+  push_docker_image:
+      name: Push Docker image to Dockerhub
+      runs-on: ubuntu-latest
+      needs: run_tests
+      steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+
+          - name: Login to Docker Hub
+            uses: docker/login-action@v3
+            with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+          - name: Build and push
+            uses: docker/build-push-action@v5
+            with:
+                context: ./lib/main
+                file: ./lib/main/Dockerfile
+                push: true
+                tags: ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
+                build-args: |
+                    "TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}"
+                    "TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }}"
+                    "MONGODB_URI=${{ secrets.MONGODB_URI }}"
+    
+    # build:
+    #     name: Build
+    #     needs: run_tests
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - uses: actions/checkout@v4
+    #         - name: Set up Go
+    #           uses: actions/setup-go@v2
+    #           with:
+    #               go-version: 1.16
+    #         - name: Build
+    #           run: go build -o ./lib/main ./lib/main
 
     run_tests:
         name: Run tests
-        needs: build
         runs-on: ubuntu-latest
         env:
             TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
@@ -29,31 +55,6 @@ jobs:
             - name: Run tests
               run: TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }} TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }} MONGODB_URI=${{ secrets.MONGODB_URI }} go test -v ./...
 
-    push_docker_image:
-        name: Push Docker image to Dockerhub
-        runs-on: ubuntu-latest
-        needs: run_tests
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-
-            - name: Login to Docker Hub
-              uses: docker/login-action@v3
-              with:
-                  username: ${{ secrets.DOCKERHUB_USERNAME }}
-                  password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-            - name: Build and push
-              uses: docker/build-push-action@v5
-              with:
-                  context: ./lib/main
-                  file: ./lib/main/Dockerfile
-                  push: true
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/domain-app:latest
-                  build-args: |
-                      "TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}"
-                      "TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }}"
-                      "MONGODB_URI=${{ secrets.MONGODB_URI }}"
 
     deploy:
         name: Deploy to Fly
