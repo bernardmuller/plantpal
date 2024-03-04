@@ -11,6 +11,9 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
+            - name: Print
+              run: ls -al
+
             - name: Build image
               run: TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }} TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }} MONGODB_URI=${{ secrets.MONGODB_URI }} docker build -t domain-app:latest -f ./lib/main/Dockerfile .
 
