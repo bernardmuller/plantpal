@@ -2,10 +2,13 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/bernardmuller/domain-app/db"
 )
 
 //go:embed templates/*
@@ -29,6 +32,18 @@ func main() {
 		}
 
 		t.ExecuteTemplate(w, "index.html.tmpl", data)
+	})
+
+	http.HandleFunc("/health-check", func(w http.ResponseWriter, r *http.Request) {
+		_, err := db.Connect_db()
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Hello %s!\n", fly_away())
 	})
 
 	log.Println("listening on", port)
