@@ -30,22 +30,22 @@ jobs:
                       "TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }}"
                       "MONGODB_URI=${{ secrets.MONGODB_URI }}"
 
-    # build:
-    #     name: Build
-    #     needs: run_tests
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - uses: actions/checkout@v4
-    #         - name: Set up Go
-    #           uses: actions/setup-go@v2
-    #           with:
-    #               go-version: 1.16
-    #         - name: Build
-    #           run: go build -o ./lib/main ./lib/main
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Go
+              uses: actions/setup-go@v2
+              with:
+                  go-version: 1.16
+            - name: Build
+              run: cd ./lib/main && go build -o domain-app
 
     run_tests:
         name: Run tests
         runs-on: ubuntu-latest
+        needs: build
         env:
             TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
             TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
