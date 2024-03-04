@@ -7,7 +7,7 @@ jobs:
     push_docker_image:
         name: Push Docker image to Dockerhub
         runs-on: ubuntu-latest
-        needs: run_tests
+        needs: build_and_test
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -30,31 +30,39 @@ jobs:
                       "TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }}"
                       "MONGODB_URI=${{ secrets.MONGODB_URI }}"
 
-    build:
-        name: Build
+    build_and_test:
+        name: Build and run tests
         runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - name: Set up Go
-              uses: actions/setup-go@v2
-              with:
-                  go-version: 1.22
-            - name: Build
-              run: cd ./lib/main && go build -o domain-app
-
-    run_tests:
-        name: Run tests
-        runs-on: ubuntu-latest
-        needs: build
         env:
             TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
             TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
             MONGODB_URI: ${{ secrets.MONGODB_URI }}
         steps:
             - uses: actions/checkout@v4
+            - name: Set up Go
+              uses: actions/setup-go@v2
+              with:
+                  go-version: 1.22
+
+            - name: Build
+              run: cd ./lib/main && go build -o domain-app
+
             - name: Run tests
-              run: cd ./lib/main && ls -al
-              # run: cd ./lib/main && TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }} TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }} MONGODB_URI=${{ secrets.MONGODB_URI }} go test
+              run: cd ./lib/main && go test
+
+    # run_tests:
+    #     name: Run tests
+    #     runs-on: ubuntu-latest
+    #     needs: build
+    #     env:
+    #       TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+    #       TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+    #       MONGODB_URI: ${{ secrets.MONGODB_URI }}
+    #     steps:
+    #         - uses: actions/checkout@v4
+    #         - name: Run tests
+    #           run: cd ./lib/main && ls -al
+    #           # run: cd ./lib/main && TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }} TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }} MONGODB_URI=${{ secrets.MONGODB_URI }} go test
 
     deploy:
         name: Deploy to Fly
