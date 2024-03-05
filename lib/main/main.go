@@ -44,6 +44,7 @@ func main() {
 	router.HandleFunc("/health-check", func(w http.ResponseWriter, r *http.Request) {
 		_, err := db.Connect_db()
 		if err != nil {
+			log.Println(err)
 			response := Response{Ok: false, Message: "Error connecting to database."}
 
 			js, _ := json.Marshal(response)
