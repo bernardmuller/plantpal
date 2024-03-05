@@ -31,7 +31,9 @@ func main() {
 		port = "8080"
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	router := http.NewServeMux()
+
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := map[string]string{
 			"Region": os.Getenv("FLY_REGION"),
 		}
@@ -39,7 +41,7 @@ func main() {
 		t.ExecuteTemplate(w, "index.html.tmpl", data)
 	})
 
-	http.HandleFunc("/health-check", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/health-check", func(w http.ResponseWriter, r *http.Request) {
 		_, err := db.Connect_db()
 		if err != nil {
 			response := Response{Ok: false, Message: "Error connecting to database."}
@@ -57,5 +59,5 @@ func main() {
 	})
 
 	log.Println("listening on", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
