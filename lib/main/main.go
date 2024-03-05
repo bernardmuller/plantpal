@@ -60,6 +60,6 @@ func main() {
 		w.Write(js)
 	})
 
-	log.Println("listening on", port)
+	log.Println("Listening on port", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }

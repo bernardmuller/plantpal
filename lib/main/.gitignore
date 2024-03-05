@@ -1,2 +1,4 @@
 domain-app
 .env
+bin
+tmp
