@@ -50,20 +50,6 @@ jobs:
             - name: Run tests
               run: cd ./lib/main && go test
 
-    # run_tests:
-    #     name: Run tests
-    #     runs-on: ubuntu-latest
-    #     needs: build
-    #     env:
-    #       TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
-    #       TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
-    #       MONGODB_URI: ${{ secrets.MONGODB_URI }}
-    #     steps:
-    #         - uses: actions/checkout@v4
-    #         - name: Run tests
-    #           run: cd ./lib/main && ls -al
-    #           # run: cd ./lib/main && TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }} TURSO_AUTH_TOKEN=${{ secrets.TURSO_AUTH_TOKEN }} MONGODB_URI=${{ secrets.MONGODB_URI }} go test
-
     deploy:
         name: Deploy to Fly
         needs: push_docker_image

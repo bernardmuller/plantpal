@@ -49,6 +49,7 @@ func main() {
 			js, _ := json.Marshal(response)
 			w.Header().Add("Content-Type", "application/json")
 			w.Write(js)
+			return
 		}
 
 		response := Response{Ok: true, Message: "All good!"}
