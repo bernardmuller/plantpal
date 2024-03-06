@@ -3,7 +3,8 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'my-domain-app-muddy-haze-8196'
+app = 'my-domain-app'
+app_name = 'my-domain-app'
 primary_region = 'jnb'
 
 [build]
