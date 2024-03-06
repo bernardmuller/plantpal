@@ -3,15 +3,16 @@ package cms_db
 import (
 	"context"
 	"fmt"
-	// "os"
+	"os"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func Connect_cms_db() (*mongo.Client, error) {
-	// uri := os.Getenv("MONGODB_URI")
-	uri := "mongodb+srv://bernarmuller:@C8PF7RngnA2CX*@portal.eooko63.mongodb.net/?retryWrites=true&w=majority&appName=portal"
+	err := godotenv.Load()
+	uri := os.Getenv("MONGODB_URI")
 	if uri == "" {
 		return nil, fmt.Errorf("MONGODB_URI environment variables must be set")
 	}
