@@ -3,18 +3,12 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 func Connect_db() (*sql.DB, error) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	database_name := os.Getenv("TEST_DATABASE_URL")
 	auth_token := os.Getenv("TURSO_AUTH_TOKEN")

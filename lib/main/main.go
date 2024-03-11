@@ -42,6 +42,12 @@ func main() {
 		t.ExecuteTemplate(w, "index.html.tmpl", data)
 	})
 
+	router.HandleFunc("/clicked", func(w http.ResponseWriter, r *http.Request) {
+		// tmplStr := "<div>Hello There!</div>"
+		w.Header().Set("Content-Type", "text/html")
+		hello("bernardmuller").Render(r.Context(), w)
+	})
+
 	router.HandleFunc("/health-check", func(w http.ResponseWriter, r *http.Request) {
 		params := r.URL.Query()
 		db_search_param := params.Get("db")
@@ -74,7 +80,7 @@ func main() {
 				return
 			}
 
-      cms_db.Disconnect_cms_db(db)
+			cms_db.Disconnect_cms_db(db)
 
 			response := Response{Ok: true, Message: "CMS Database is alive!"}
 			js, _ := json.Marshal(response)
