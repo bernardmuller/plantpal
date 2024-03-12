@@ -1,0 +1,10 @@
+package templates
+
+templ GuestIndex() {
+	<div>
+  <h1>Welcome Guest!</h1>
+  <button hx-post="/clicked" hx-swap="outerHTML">
+    Click Me
+  </button>
+	</div>
+}

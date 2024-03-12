@@ -1,23 +1,21 @@
-module github.com/bernardmuller/domain-app
+module domain-app
 
 go 1.22.0
 
 require (
+	github.com/a-h/templ v0.2.598
 	github.com/joho/godotenv v1.5.1
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240220085343-4ae0eb9d0898
 	go.mongodb.org/mongo-driver v1.14.0
 )
 
 require (
-	github.com/a-h/templ v0.2.598 // indirect
 	github.com/antlr/antlr4/runtime/Go/antlr/v4 v4.0.0-20230512164433-5d1fd1a340c9 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/klauspost/compress v1.15.15 // indirect
 	github.com/libsql/sqlite-antlr4-parser v0.0.0-20230802215326-5cb5bb604475 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
