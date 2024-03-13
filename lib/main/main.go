@@ -13,10 +13,6 @@ type Response struct {
 	Message string `json:"message"`
 }
 
-func fly_away() string {
-	return "Fly!"
-}
-
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
