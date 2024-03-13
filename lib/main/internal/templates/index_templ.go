@@ -23,7 +23,7 @@ func GuestIndex() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><h1>Welcome Guest!</h1><button hx-post=\"/clicked\" hx-swap=\"outerHTML\">Click Me</button></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><div id=\"log\"></div><form id=\"form\"><input type=\"text\" id=\"msg\" size=\"64\" autofocus class=\"text-black\"> <input type=\"submit\" value=\"Send\"></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
