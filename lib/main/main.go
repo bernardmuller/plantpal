@@ -4,6 +4,7 @@ import (
 	"domain-app/internal/handlers"
 	"domain-app/internal/templates"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 )
@@ -14,10 +15,7 @@ type Response struct {
 }
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	router := http.NewServeMux()
 
@@ -33,6 +31,7 @@ func main() {
 
 	router.HandleFunc("/health-check", handlers.HealthCheckHandler().ServeHTTP)
 
-	log.Println("Listening on", port)
+	port := "8080"
+	logger.Info("Server started", slog.String("port", port))
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
