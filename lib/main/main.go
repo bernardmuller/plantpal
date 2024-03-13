@@ -3,6 +3,8 @@ package main
 import (
 	"domain-app/internal/handlers"
 	"domain-app/internal/templates"
+	"domain-app/internal/websockets"
+	"flag"
 	"log"
 	"log/slog"
 	"net/http"
@@ -16,32 +18,28 @@ type Response struct {
 	Message string `json:"message"`
 }
 
-func echo(w http.ResponseWriter, r *http.Request) {
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Print("upgrade:", err)
-		return
-	}
-	defer c.Close()
-	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
+// flag.Parse()
+// 	hub := newHub()
+// 	go hub.run()
+// 	http.HandleFunc("/", serveHome)
+// 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+// 	})
 
-		log.Printf("recv: %s", message)
-		err = c.WriteMessage(mt, message)
-		if err != nil {
-			log.Println("write:", err)
-			break
-		}
-	}
-}
+// 	server := &http.Server{
+// 		Addr:              *addr,
+// 		ReadHeaderTimeout: 3 * time.Second,
+// 	}
+// 	err := server.ListenAndServe()
+// 	if err != nil {
+// 		log.Fatal("ListenAndServe: ", err)
+// 	}
 
 var upgrader = websocket.Upgrader{} // use default options
 
 func main() {
+	flag.Parse()
+	hub := websockets.NewHub()
+	go hub.Run()
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	router := http.NewServeMux()
@@ -58,7 +56,9 @@ func main() {
 
 	router.HandleFunc("/health-check", handlers.HealthCheckHandler().ServeHTTP)
 
-	router.HandleFunc("/ws", echo)
+	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		websockets.ServeWs(hub, w, r)
+	})
 
 	port := "8080"
 	logger.Info("Server started", slog.String("port", port))
