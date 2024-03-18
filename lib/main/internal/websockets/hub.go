@@ -18,24 +18,28 @@ func NewHub() *Hub {
 	}
 }
 
-func (h *Hub) Run() {
+func (hub *Hub) Run() {
 	for {
 		select {
-		case client := <-h.register:
-			h.clients[client] = true
-      fmt.Println("Client registered")
-		case client := <-h.unregister:
-			if _, ok := h.clients[client]; ok {
-				delete(h.clients, client)
+		case client := <-hub.register:
+			hub.clients[client] = true
+			fmt.Println("Client registered")
+		case client := <-hub.unregister:
+			if _, ok := hub.clients[client]; ok {
+				delete(hub.clients, client)
 				close(client.send)
 			}
-		case message := <-h.broadcast:
-			for client := range h.clients {
+		case message := <-hub.broadcast:
+			for client := range hub.clients {
 				select {
 				case client.send <- message:
+					fmt.Println("Message received from client")
+					myString := string(message)
+
+					fmt.Println("Message: ", myString)
 				default:
 					close(client.send)
-					delete(h.clients, client)
+					delete(hub.clients, client)
 				}
 			}
 		}

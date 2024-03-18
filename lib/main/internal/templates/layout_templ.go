@@ -30,13 +30,13 @@ func header(title string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/layout.templ`, Line: 4, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout.templ`, Line: 4, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><script src=\"https://cdn.tailwindcss.com\"></script><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><link rel=\"stylesheet\" href=\"static/css/style.css\"><script type=\"text/javascript\">\n    window.onload = function () {\n    var conn;\n    var msg = document.getElementById(\"msg\");\n    var log = document.getElementById(\"log\");\n\n    function appendLog(item) {\n        var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;\n        log.appendChild(item);\n        if (doScroll) {\n            log.scrollTop = log.scrollHeight - log.clientHeight;\n        }\n    }\n\n    document.getElementById(\"form\").onsubmit = function () {\n        if (!conn) {\n            return false;\n        }\n        if (!msg.value) {\n            return false;\n        }\n        conn.send(msg.value);\n        msg.value = \"\";\n        return false;\n    };\n\n    if (window[\"WebSocket\"]) {\n        conn = new WebSocket(\"ws://\" + document.location.host + \"/ws\");\n        conn.onclose = function (evt) {\n            var item = document.createElement(\"div\");\n            item.innerHTML = \"<b>Connection closed.</b>\";\n            appendLog(item);\n        };\n        conn.onmessage = function (evt) {\n            var messages = evt.data.split('\\n');\n            for (var i = 0; i < messages.length; i++) {\n                var item = document.createElement(\"div\");\n                item.innerText = messages[i];\n                appendLog(item);\n            }\n        };\n    } else {\n        var item = document.createElement(\"div\");\n        item.innerHTML = \"<b>Your browser does not support WebSockets.</b>\";\n        appendLog(item);\n    }\n};\n\n\nvar nCounter = 0;\n\n// Set up event handler to produce text for the window focus event\nwindow.addEventListener(\"focus\", function(event) \n{ \n    document.getElementById('message').innerHTML = \"window has focus \" + nCounter; \n    nCounter = nCounter + 1; \n}, false);\n  </script></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><script src=\"https://cdn.tailwindcss.com\"></script><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><link rel=\"stylesheet\" href=\"static/css/style.css\"><script type=\"text/javascript\">\n      window.onload = function () {\n      var conn;\n      var msg = document.getElementById(\"msg\");\n      var log = document.getElementById(\"log\");\n      let conn_open = false;\n\n      function appendLog(item) {\n          var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;\n          log.appendChild(item);\n          if (doScroll) {\n              log.scrollTop = log.scrollHeight - log.clientHeight;\n          }\n      }\n\n      document.getElementById(\"form\").onsubmit = function () {\n          if (!conn) {\n              return false;\n          }\n          if (!msg.value) { \n              return false;\n          }\n          conn.send(msg.value);\n          msg.value = \"\";\n          return false;\n      };\n\n      function createConnection() {\n        conn = new WebSocket(\"ws://\" + document.location.host + \"/ws\");\n        conn.onclose = function (evt) {\n          var item = document.createElement(\"div\");\n          item.innerHTML = \"<b>Connection closed.</b>\";\n          appendLog(item);\n          conn_open = false;\n        };\n        conn.onmessage = function (evt) {\n          var messages = evt.data.split('\\n');\n          for (var i = 0; i < messages.length; i++) {\n            var item = document.createElement(\"div\");\n            item.innerText = messages[i];\n            appendLog(item);\n          }\n        };\n      }\n\n      var nCounter = 0;\n\n      // Set up event handler to produce text for the window focus event\n      window.addEventListener(\"focus\", function(event) \n          { \n            document.getElementById('message').innerHTML = \"window has focus \" + nCounter; \n            nCounter = nCounter + 1; \n\n            if(conn_open === false) {\n              console.log(\"test\")\n              if (window[\"WebSocket\"]) {\n                conn_open = true;\n                createConnection()\n              } else {\n                var item = document.createElement(\"div\");\n                item.innerHTML = \"<b>Your browser does not support WebSockets.</b>\";\n                appendLog(item);\n              }\n\n            }\n          }, false);\n\n          document.getElementById(\"close\", function() {\n            if (window[\"WebSocket\"]) {\n              conn.close();\n            }\n          });\n\n          createConnection()\n      };\n    </script></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -112,15 +112,7 @@ func Layout(contents templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body class=\"flex flex-col h-full bg-stone-900 text-white\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = nav().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"p-4 flex-1\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body class=\"flex flex-col h-full bg-stone-900 text-white\"><main class=\"p-4 flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
