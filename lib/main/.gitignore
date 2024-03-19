@@ -2,3 +2,4 @@ domain-app
 .env
 bin
 tmp
+.idea
