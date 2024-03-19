@@ -2,65 +2,58 @@ package main
 
 import (
 	"domain-app/internal/handlers"
-	"domain-app/internal/templates"
-	"domain-app/internal/websockets"
 	"flag"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
+
 	"os"
 
-	"github.com/gorilla/websocket"
+	"github.com/labstack/echo"
 )
-
-type Response struct {
-	Ok      bool   `json:"ok"`
-	Message string `json:"message"`
-}
-
-// flag.Parse()
-// 	hub := newHub()
-// 	go hub.run()
-// 	http.HandleFunc("/", serveHome)
-// 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-// 	})
-
-// 	server := &http.Server{
-// 		Addr:              *addr,
-// 		ReadHeaderTimeout: 3 * time.Second,
-// 	}
-// 	err := server.ListenAndServe()
-// 	if err != nil {
-// 		log.Fatal("ListenAndServe: ", err)
-// 	}
-
-var upgrader = websocket.Upgrader{} // use default options
 
 func main() {
 	flag.Parse()
-	hub := websockets.NewHub()
-	go hub.Run()
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	router := http.NewServeMux()
+	fmt.Println(os.Getenv("TEST_DATABASE_URL"))
 
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		content := templates.GuestIndex()
-		templates.Layout(content).Render(r.Context(), w)
+	plantHandler := handlers.PlantHandler{}
+	healthcheckHandler := handlers.HealthCheckHandler{}
+
+	e := echo.New()
+
+	e.GET("/plants", func(c echo.Context) error {
+		err := handlers.PlantHandler.GetAllPlants(plantHandler, c)
+		if err != nil {
+			fmt.Println("Error")
+		}
+		return nil
 	})
 
-	router.HandleFunc("/clicked", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html")
-		templates.Hello("Bernard").Render(r.Context(), w)
-	})
+	//router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	//	content := templates.GuestIndex()
+	//	templates.Layout(content).Render(r.Context(), w)
+	//})
 
-	router.HandleFunc("/health-check", handlers.HealthCheckHandler().ServeHTTP)
+	// router.HandleFunc("/clicked", func(w http.ResponseWriter, r *http.Request) {
+	// 	w.Header().Set("Content-Type", "text/html")
+	// 	templates.Hello("Bernard").Render(r.Context(), w)
+	// })
 
-	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		websockets.ServeWs(hub, w, r)
+	e.GET("/health-check", func(context echo.Context) error {
+		data, err := handlers.HealthCheckHandler.ServeHTTP(healthcheckHandler, context)
+		if err != nil {
+			return context.JSON(http.StatusInternalServerError, map[string]string{
+				"error": "Internal Server Error",
+			})
+		}
+		fmt.Printf("%d", data)
+		return context.JSON(http.StatusOK, data)
 	})
 
 	port := "8080"
 	logger.Info("Server started", slog.String("port", port))
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(http.ListenAndServe(":"+port, e))
 }

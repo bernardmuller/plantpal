@@ -3,65 +3,49 @@ package handlers
 import (
 	"domain-app/internal/store/cms_db"
 	"domain-app/internal/store/db"
-	"encoding/json"
-	"log"
-	"net/http"
+	"fmt"
+	"github.com/labstack/echo"
 )
 
-type HealthCheck struct{}
+type HealthCheckHandler struct{}
 
 type Response struct {
 	Ok      bool   `json:"ok"`
 	Message string `json:"message"`
 }
 
-func HealthCheckHandler() *HealthCheck {
-	return &HealthCheck{}
-}
+func (handler HealthCheckHandler) ServeHTTP(c echo.Context) (*Response, error) {
+	dbSearchParam := c.QueryParam("db")
 
-func (h *HealthCheck) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	db_search_param := params.Get("db")
-
-	switch db_search_param {
+	switch dbSearchParam {
 	case "test":
 		_, err := db.Connect_db()
 		if err != nil {
-			log.Println(err)
-			response := Response{Ok: false, Message: "Error connecting to database."}
-
-			js, _ := json.Marshal(response)
-			w.Header().Add("Content-Type", "application/json")
-			w.Write(js)
-			return
+			fmt.Println("Error connecting to DB: ", err)
+			return nil, err
 		}
+
 		response := Response{Ok: true, Message: "Database is alive!"}
-		js, _ := json.Marshal(response)
-		w.Header().Add("Content-Type", "application/json")
-		w.Write(js)
+		return &response, nil
 	case "cms":
-		db, err := cms_db.Connect_cms_db()
+		database, err := cms_db.Connect_cms_db()
 		if err != nil {
-			log.Println(err)
-			response := Response{Ok: false, Message: "Error connecting to CMS database."}
+			fmt.Println("Error connecting to DB: ", err)
+			echo.NewHTTPError(500, err)
+			return nil, err
 
-			js, _ := json.Marshal(response)
-			w.Header().Add("Content-Type", "application/json")
-			w.Write(js)
-			return
 		}
 
-		cms_db.Disconnect_cms_db(db)
+		err = cms_db.Disconnect_cms_db(database)
+		if err != nil {
+			fmt.Println("Error disconnecting from DB: ", err)
+			return nil, err
+		}
 
 		response := Response{Ok: true, Message: "CMS Database is alive!"}
-		js, _ := json.Marshal(response)
-		w.Header().Add("Content-Type", "application/json")
-		w.Write(js)
+		return &response, nil
 	default:
 		response := Response{Ok: true, Message: "All good here!"}
-		js, _ := json.Marshal(response)
-		w.Header().Add("Content-Type", "application/json")
-		w.Write(js)
+		return &response, nil
 	}
-
 }
