@@ -5,6 +5,8 @@ go 1.22.0
 require (
 	github.com/a-h/templ v0.2.598
 	github.com/joho/godotenv v1.5.1
+	github.com/labstack/echo v3.3.10+incompatible
+	github.com/labstack/echo/v4 v4.11.4
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240220085343-4ae0eb9d0898
 	go.mongodb.org/mongo-driver v1.14.0
 )
@@ -15,8 +17,6 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/klauspost/compress v1.15.15 // indirect
-	github.com/labstack/echo v3.3.10+incompatible // indirect
-	github.com/labstack/echo/v4 v4.11.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/libsql/sqlite-antlr4-parser v0.0.0-20230802215326-5cb5bb604475 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

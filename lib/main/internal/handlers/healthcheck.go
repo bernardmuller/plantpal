@@ -4,7 +4,7 @@ import (
 	"domain-app/internal/store/cms_db"
 	"domain-app/internal/store/db"
 	"fmt"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type HealthCheckHandler struct{}

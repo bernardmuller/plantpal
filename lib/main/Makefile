@@ -35,7 +35,5 @@ build:
 	@go build -o $(APP)
 
 run: kill_port
-	@echo "Generating templates..."
-	@templ generate
 	@echo "Running main.go..."
 	@TURSO_AUTH_TOKEN=${TURSO_AUTH_TOKEN} TEST_DATABASE_URL=${TEST_DATABASE_URL} MONGODB_URI=${MONGODB_URI} go run main.go
