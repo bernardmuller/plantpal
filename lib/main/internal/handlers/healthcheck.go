@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"domain-app/internal/store/cms_db"
-	"domain-app/internal/store/db"
+	"domain-app/internal/store/libsql"
+	"domain-app/internal/store/mongo"
 	"fmt"
 	"github.com/labstack/echo/v4"
 )
@@ -19,7 +19,7 @@ func (handler HealthCheckHandler) ServeHTTP(c echo.Context) (*Response, error) {
 
 	switch dbSearchParam {
 	case "test":
-		_, err := db.Connect_db()
+		_, err := libsql.ConnectDb()
 		if err != nil {
 			fmt.Println("Error connecting to DB: ", err)
 			return nil, err
@@ -28,7 +28,7 @@ func (handler HealthCheckHandler) ServeHTTP(c echo.Context) (*Response, error) {
 		response := Response{Ok: true, Message: "Database is alive!"}
 		return &response, nil
 	case "cms":
-		database, err := cms_db.Connect_cms_db()
+		database, err := mongo.Connect_cms_db()
 		if err != nil {
 			fmt.Println("Error connecting to DB: ", err)
 			echo.NewHTTPError(500, err)
@@ -36,7 +36,7 @@ func (handler HealthCheckHandler) ServeHTTP(c echo.Context) (*Response, error) {
 
 		}
 
-		err = cms_db.Disconnect_cms_db(database)
+		err = mongo.Disconnect_cms_db(database)
 		if err != nil {
 			fmt.Println("Error disconnecting from DB: ", err)
 			return nil, err

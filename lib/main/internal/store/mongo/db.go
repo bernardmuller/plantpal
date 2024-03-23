@@ -1,4 +1,4 @@
-package cms_db
+package mongo
 
 import (
 	"context"

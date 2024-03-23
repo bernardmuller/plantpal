@@ -37,3 +37,15 @@ build:
 run: kill_port
 	@echo "Running main.go..."
 	@TURSO_AUTH_TOKEN=${TURSO_AUTH_TOKEN} TEST_DATABASE_URL=${TEST_DATABASE_URL} MONGODB_URI=${MONGODB_URI} go run main.go
+
+db_migrate_up:
+	@echo "Migrating up..."
+	@cd ./internal/store/postgres/schema &&	goose postgres ${POSTGRES_URI} up
+
+db_migrate_down:
+	@echo "Migrating down..."
+	@cd ./internal/store/postgres/schema &&	goose postgres ${POSTGRES_URI} down
+
+db_generate_queries:
+	@echo "Generating queries..."
+	@sqlc generate

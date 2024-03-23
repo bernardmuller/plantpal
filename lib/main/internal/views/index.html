@@ -6,12 +6,101 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <link rel="stylesheet" href="static/css/style.css"/>
+    <script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
+    <link rel="stylesheet" href="/css/index.css">
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", (event) => {
+            document.body.addEventListener('htmx:beforeSwap', function(evt) {
+                if (evt.detail.xhr.status === 422) {
+                    console.log("setting status to paint");
+                    // allow 422 responses to swap as we are using this as a signal that
+                    // a form was submitted with bad data and want to rerender with the
+                    // errors
+                    //
+                    // set isError to false to avoid error logging in console
+                    evt.detail.shouldSwap = true;
+                    evt.detail.isError = false;
+                }
+            });
+        });
+    </script>
 </head>
 <body class="bg-emerald-900 p-4">
-    <h1 class="text-white text-3xl">PlantPal</h1>
-    <p>Plant Name: {{ .Name }}</p>
+    {{ template "addPlantForm" .Form }}
+    <hr/>
+    {{ template "plants" .Data }}
 </body>
 </html>
+{{ end }}
+
+{{ block "addPlantForm" . }}
+<form id="addPlantForm" hx-post="/plants" hx-swap="outerHTML" >
+    <label for="name">Name</label>
+    <input name="name"
+           {{ if .Values }}
+                {{ if .Values.name }}
+                    value="{{ .Values.name }}"
+                {{ end }}
+           {{ end }}
+           placeholder="Name"
+           id="name"
+    >
+
+    {{ if (.Errors) }}
+        {{ if (.Errors.name) }}
+            <div class="error">{{ .Errors.name }}</div>
+        {{ end }}
+    {{ end }}
+
+    <label for="family">Family</label>
+    <input
+            type="text"
+            {{ if (.Values) }}
+            {{ if (.Values.Family) }}
+           value="{{ .Values.Family }}"
+           {{ end }}
+           {{ end }}
+           name="family"
+           placeholder="Family"
+            id="family"
+    >
+
+    {{ if (.Errors) }}
+        {{ if (.Errors.Family) }}
+            <div class="error">{{ .Errors.Family }}</div>
+        {{ end }}
+    {{ end }}
+
+    <button type="submit">Submit</button>
+</form>
+{{ end }}
+
+{{ block "plants" . }}
+    <div id="plants">
+        {{ range .Plants }}
+            {{ template "plant" . }}
+        {{ end }}
+    </div>
+{{ end }}
+
+{{ block "plant" . }}
+<div class="plant" style="display: flex;" >
+    <div hx-delete="/plants/{{ .Id }}" hx-swap="outerHTML" hx-target="closest .plant" style="cursor: pointer; width: 24px; height: 24px">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path fill="none" d="M0 0h24v24H0z"/>
+            <path d="M4 2h16a1 1 0 011 1v1a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1zM3 6h18v16a1 1 0 01-1 1H4a1 1 0 01-1-1V6zm3 3v9a1 1 0 002 0v-9a1 1 0 00-2 0zm5 0v9a1 1 0 002 0v-9a1 1 0 00-2 0zm5 0v9a1 1 0 002 0v-9a1 1 0 00-2 0z"/>
+        </svg>
+    </div>
+    <div>
+        {{ .Id }}
+        Name: <span>{{ .Name }}</span>
+        Family: <span>{{ .Family }}</span>
+    </div>
+</div>
+{{ end }}
+
+{{ block "oob-plant" . }}
+    <div hx-swap-oob="afterbegin" id="plants">
+        {{ template "plant" . }}
+    </div>
 {{ end }}

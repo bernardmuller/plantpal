@@ -1,14 +1,18 @@
 package handlers
 
 import (
-	"fmt"
-
+	"domain-app/internal/store/postgres"
 	"github.com/labstack/echo/v4"
 )
 
-type PlantHandler struct{}
+type PlantHandler struct {
+	DB *postgres.Queries
+}
 
-func (handler PlantHandler) GetAllPlants(c echo.Context) error {
-	fmt.Println("All plants")
-	return nil
+func (handler PlantHandler) GetAllPlants(c echo.Context) ([]postgres.Plant, error) {
+	plants, err := handler.DB.GetAllPlants(c.Request().Context())
+	if err != nil {
+		return nil, err
+	}
+	return plants, nil
 }
