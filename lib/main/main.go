@@ -26,51 +26,6 @@ func newTemplate() *Templates {
 	}
 }
 
-type FormData struct {
-	Errors map[string]string
-	Values map[string]string
-}
-
-func NewFormData() FormData {
-	return FormData{
-		Errors: map[string]string{},
-		Values: map[string]string{},
-	}
-}
-
-type PageData struct {
-	Data Data
-	Form FormData
-}
-
-func NewPageData(data Data, form FormData) PageData {
-	return PageData{
-		Data: data,
-		Form: form,
-	}
-}
-
-type Data struct {
-	Plants []postgres.Plant
-}
-
-func NewData() model.Plants {
-	return model.Plants{
-		Plants: []model.Plant{
-			{
-				Common: "Pothos",
-				Family: "Araceae",
-				Id:     1,
-			},
-			{
-				Common: "Cactus",
-				Family: "Cactaceae",
-				Id:     2,
-			},
-		},
-	}
-}
-
 func main() {
 	database, err := postgres.ConnectDB()
 	if err != nil {
@@ -90,50 +45,42 @@ func main() {
 	e.GET("/plants", func(c echo.Context) error {
 		plants, err := handlers.PlantHandler.GetAllPlants(plantHandler, c)
 		if err != nil {
-			fmt.Println("Error:", err)
 			return c.String(http.StatusInternalServerError, "Error fetching plants")
 		}
-		pageData := Data{Plants: plants}
 
-		fmt.Sprintf("%v", pageData)
-		//return c.Render(200, "index", NewPageData(pageData, NewFormData()))
-		return c.JSON(200, pageData)
+		pageData := model.Data{Plants: plants}
+
+		return c.Render(200, "index", model.NewPageData(pageData, model.NewFormData()))
+		//return c.JSON(200, pageData)
 	})
 
-	//e.POST("/plants", func(c echo.Context) error {
-	//
-	//	newPlant := NewPlant(name, family, id)
-	//	data.Plants = append(data.Plants, newPlant)
-	//
-	//	formData := NewFormData()
-	//	_ = c.Render(200, "addPlantForm", formData)
-	//	return c.Render(200, "oob-plant", newPlant)
-	//})
+	e.POST("/plants", func(c echo.Context) error {
+		plant, err := handlers.PlantHandler.CreatePlant(plantHandler, c)
+		if err != nil {
+			formData := model.FormData{
+				Errors: map[string]string{
+					"name": err.Error(),
+				},
+				Values: map[string]string{
+					"name":   c.FormValue("name"),
+					"family": c.FormValue("family"),
+				}}
+			return c.Render(422, "addPlantForm", formData)
+		}
 
-	//e.DELETE("/plants/:id", func(c echo.Context) error {
-	//	idStr := c.Param("id")
-	//	id, err := strconv.Atoi(idStr)
-	//
-	//	if err != nil {
-	//		fmt.Println("Error:", err)
-	//		return c.String(400, "Id must be an integer")
-	//	}
-	//
-	//	deleted := false
-	//	for i, plant := range data.Plants {
-	//		if plant.Id == id {
-	//			data.Plants = append(data.Plants[:i], data.Plants[i+1:]...)
-	//			deleted = true
-	//			break
-	//		}
-	//	}
-	//
-	//	if !deleted {
-	//		return c.String(400, "Plant not found")
-	//	}
-	//
-	//	return c.NoContent(200)
-	//})
+		formData := model.NewFormData()
+		_ = c.Render(200, "addPlantForm", formData)
+		return c.Render(200, "oob-plant", plant)
+	})
+
+	e.DELETE("/plants/:id", func(c echo.Context) error {
+		err := handlers.PlantHandler.DeletePlant(plantHandler, c)
+		if err != nil {
+			return c.String(400, err.Error())
+		}
+
+		return c.NoContent(200)
+	})
 
 	//e.GET("/", func(c echo.Context) error {
 	//	plants, err := handlers.PlantHandler.GetAllPlants(plantHandler, c)

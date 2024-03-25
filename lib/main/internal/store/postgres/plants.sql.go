@@ -36,6 +36,25 @@ func (q *Queries) CreatePlant(ctx context.Context, arg CreatePlantParams) (Plant
 	return i, err
 }
 
+const deletePlant = `-- name: DeletePlant :one
+DELETE FROM plants
+WHERE id = $1
+RETURNING id, common, family, created_at, updated_at
+`
+
+func (q *Queries) DeletePlant(ctx context.Context, id uuid.UUID) (Plant, error) {
+	row := q.db.QueryRowContext(ctx, deletePlant, id)
+	var i Plant
+	err := row.Scan(
+		&i.ID,
+		&i.Common,
+		&i.Family,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getAllPlants = `-- name: GetAllPlants :many
 SELECT id, common, family, created_at, updated_at FROM plants
 ORDER BY created_at DESC
@@ -68,4 +87,66 @@ func (q *Queries) GetAllPlants(ctx context.Context) ([]Plant, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const getPlantByCommon = `-- name: GetPlantByCommon :one
+SELECT id, common, family, created_at, updated_at FROM plants
+WHERE common = $1
+`
+
+func (q *Queries) GetPlantByCommon(ctx context.Context, common string) (Plant, error) {
+	row := q.db.QueryRowContext(ctx, getPlantByCommon, common)
+	var i Plant
+	err := row.Scan(
+		&i.ID,
+		&i.Common,
+		&i.Family,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getPlantByID = `-- name: GetPlantByID :one
+SELECT id, common, family, created_at, updated_at FROM plants
+WHERE id = $1
+`
+
+func (q *Queries) GetPlantByID(ctx context.Context, id uuid.UUID) (Plant, error) {
+	row := q.db.QueryRowContext(ctx, getPlantByID, id)
+	var i Plant
+	err := row.Scan(
+		&i.ID,
+		&i.Common,
+		&i.Family,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updatePlant = `-- name: UpdatePlant :one
+UPDATE plants
+SET common = $2, family = $3, updated_at = NOW()
+WHERE id = $1
+RETURNING id, common, family, created_at, updated_at
+`
+
+type UpdatePlantParams struct {
+	ID     uuid.UUID
+	Common string
+	Family string
+}
+
+func (q *Queries) UpdatePlant(ctx context.Context, arg UpdatePlantParams) (Plant, error) {
+	row := q.db.QueryRowContext(ctx, updatePlant, arg.ID, arg.Common, arg.Family)
+	var i Plant
+	err := row.Scan(
+		&i.ID,
+		&i.Common,
+		&i.Family,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

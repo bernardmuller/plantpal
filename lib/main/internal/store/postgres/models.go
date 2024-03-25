@@ -17,3 +17,20 @@ type Plant struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+type User struct {
+	ID        uuid.UUID
+	Email     string
+	Firstname string
+	Lastname  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type UserPlant struct {
+	ID        uuid.UUID
+	UserID    uuid.NullUUID
+	PlantID   uuid.NullUUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
