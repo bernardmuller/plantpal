@@ -1,8 +1,8 @@
 package model
 
 type Plant struct {
-	Id int `json:"id"`
-	//Latin          string      `json:"latin"`
+	Id     int    `json:"id"`
+	Latin  string `json:"latin"`
 	Family string `json:"family"`
 	Common string `json:"common"`
 	//Category       Category    `json:"category"`

@@ -82,6 +82,11 @@ func main() {
 		return c.NoContent(200)
 	})
 
+	e.GET("/plants/new", func(c echo.Context) error {
+		formData := model.NewFormData()
+		return c.Render(200, "createPlant", formData)
+	})
+
 	//e.GET("/", func(c echo.Context) error {
 	//	plants, err := handlers.PlantHandler.GetAllPlants(plantHandler, c)
 	//	if err != nil {
