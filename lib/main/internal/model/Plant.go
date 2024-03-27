@@ -38,3 +38,8 @@ func (p Plant) NewPlant(common string, family string, id int) Plant {
 		Id:     id,
 	}
 }
+
+type FieldError struct {
+	Field   string
+	Message string
+}

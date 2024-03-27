@@ -14,14 +14,16 @@ func NewPageData(data Data, form FormData) PageData {
 }
 
 type FormData struct {
-	Errors map[string]string
-	Values map[string]string
+	Errors      map[string]string
+	FieldErrors map[string]FieldError
+	Values      map[string]string
 }
 
 func NewFormData() FormData {
 	return FormData{
-		Errors: map[string]string{},
-		Values: map[string]string{},
+		Errors:      map[string]string{},
+		FieldErrors: map[string]FieldError{},
+		Values:      map[string]string{},
 	}
 }
 

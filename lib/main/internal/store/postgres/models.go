@@ -5,17 +5,32 @@
 package postgres
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 type Plant struct {
-	ID        uuid.UUID
-	Common    string
-	Family    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID             uuid.UUID
+	Common         string
+	Family         string
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	Latin          sql.NullString
+	Category       sql.NullString
+	Origin         sql.NullString
+	Climate        sql.NullString
+	Tempmax        sql.NullString
+	Tempmin        sql.NullString
+	Ideallight     sql.NullString
+	Toleratedlight sql.NullString
+	Watering       sql.NullString
+	Insects        sql.NullString
+	Diseases       sql.NullString
+	Soil           sql.NullString
+	Repotperiod    sql.NullString
+	Use            sql.NullString
 }
 
 type User struct {

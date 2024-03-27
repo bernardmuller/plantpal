@@ -26,6 +26,12 @@ func newTemplate() *Templates {
 	}
 }
 
+func mergeMaps(dst, src map[string]model.FieldError) {
+	for key, value := range src {
+		dst[key] = value
+	}
+}
+
 func main() {
 	database, err := postgres.ConnectDB()
 	if err != nil {
@@ -55,22 +61,37 @@ func main() {
 	})
 
 	e.POST("/plants", func(c echo.Context) error {
-		plant, err := handlers.PlantHandler.CreatePlant(plantHandler, c)
+		fieldErrors, err := handlers.PlantHandler.CreatePlant(plantHandler, c)
 		if err != nil {
+			fmt.Println(fieldErrors)
 			formData := model.FormData{
 				Errors: map[string]string{
-					"name": err.Error(),
+					"error": err.Error(),
 				},
+				FieldErrors: fieldErrors,
 				Values: map[string]string{
-					"name":   c.FormValue("name"),
-					"family": c.FormValue("family"),
+					"common":         c.FormValue("common"),
+					"family":         c.FormValue("family"),
+					"latin":          c.FormValue("latin"),
+					"category":       c.FormValue("category"),
+					"origin":         c.FormValue("origin"),
+					"climate":        c.FormValue("climate"),
+					"tempmax":        c.FormValue("tempmax"),
+					"tempmin":        c.FormValue("tempmin"),
+					"ideallight":     c.FormValue("ideallight"),
+					"toleratedlight": c.FormValue("toleratedlight"),
+					"watering":       c.FormValue("watering"),
+					"insects":        c.FormValue("insects"),
+					"diseases":       c.FormValue("diseases"),
+					"soil":           c.FormValue("soil"),
+					"repotperiod":    c.FormValue("repotperiod"),
+					"use":            c.FormValue("use"),
 				}}
-			return c.Render(422, "addPlantForm", formData)
+			fmt.Println(formData)
+			return c.Render(422, "createPlantForm", formData)
 		}
 
-		formData := model.NewFormData()
-		_ = c.Render(200, "addPlantForm", formData)
-		return c.Render(200, "oob-plant", plant)
+		return c.Redirect(302, "/plants")
 	})
 
 	e.DELETE("/plants/:id", func(c echo.Context) error {
