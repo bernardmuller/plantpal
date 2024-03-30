@@ -1,4 +1,4 @@
-package handlers
+package services
 
 import (
 	"domain-app/internal/store/libsql"
