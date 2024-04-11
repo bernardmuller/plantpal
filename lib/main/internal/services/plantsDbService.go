@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"domain-app/internal/model"
 	"domain-app/internal/store/postgres"
 	"errors"
 	"github.com/google/uuid"
@@ -13,7 +12,7 @@ type IPlantService interface {
 	GetAllPlants(c echo.Context) ([]postgres.Plant, error)
 	GetPlantByID(c echo.Context) (postgres.Plant, error)
 	GetPlantByCommon(c echo.Context) (postgres.Plant, error)
-	CreatePlant(c echo.Context) (map[string]model.FieldError, error)
+	CreatePlant(c echo.Context) (postgres.Plant, error)
 	DeletePlant(c echo.Context) error
 }
 
@@ -54,68 +53,16 @@ func (service PlantsDbService) GetPlantByCommon(c context.Context, common string
 	return plant, nil
 }
 
-func (service PlantsDbService) CreatePlant(c context.Context) (map[string]model.FieldError, error) {
-	//params := postgres.CreatePlantParams{
-	//	Common:         c.FormValue("common"),
-	//	Family:         c.FormValue("family"),
-	//	Latin:          sql.NullString{String: c.FormValue("latin"), Valid: true},
-	//	Category:       sql.NullString{String: c.FormValue("category"), Valid: true},
-	//	Origin:         sql.NullString{String: c.FormValue("origin"), Valid: true},
-	//	Climate:        sql.NullString{String: c.FormValue("climate"), Valid: true},
-	//	Tempmax:        sql.NullString{String: c.FormValue("tempmax"), Valid: true},
-	//	Tempmin:        sql.NullString{String: c.FormValue("tempmin"), Valid: true},
-	//	Ideallight:     sql.NullString{String: c.FormValue("ideallight"), Valid: true},
-	//	Toleratedlight: sql.NullString{String: c.FormValue("toleratedlight"), Valid: true},
-	//	Watering:       sql.NullString{String: c.FormValue("watering"), Valid: true},
-	//	Insects:        sql.NullString{String: c.FormValue("insects"), Valid: true},
-	//	Diseases:       sql.NullString{String: c.FormValue("diseases"), Valid: true},
-	//	Soil:           sql.NullString{String: c.FormValue("soil"), Valid: true},
-	//	Repotperiod:    sql.NullString{String: c.FormValue("repotperiod"), Valid: true},
-	//	Use:            sql.NullString{String: c.FormValue("use"), Valid: true},
-	//}
-	//
-	//paramsSlice := reflect.ValueOf(params)
-	//fieldErrors := make([]model.FieldError, paramsSlice.NumField())
-	//
-	//for i := 0; i < paramsSlice.NumField(); i++ {
-	//	n := paramsSlice.Type().Field(i).Name
-	//	if paramsSlice.Field(i).Interface() == "" {
-	//		newFieldError := model.FieldError{Field: n, Message: "Please enter a valid " + n + " name"}
-	//		fieldErrors = append(fieldErrors, newFieldError)
-	//	}
-	//}
-	//
-	//fieldErrorsMap := make(map[string]model.FieldError)
-	//for _, err := range fieldErrors {
-	//	fieldErrorsMap[err.Field] = err
-	//}
-	//
-	//if len(fieldErrorsMap) > 1 {
-	//	return fieldErrorsMap, errors.New("Please enter valid values for all fields")
-	//}
-	//
-	//dbPlant, err := service.DB.GetPlantByCommon(c, params.Common)
-	//fmt.Println(dbPlant)
-	//if err == nil {
-	//	fmt.Println("Plant with that name already exists.")
-	//	fieldErrorsMap["Common"] = model.FieldError{Field: "Common", Message: "Plant with that name already exists."}
-	//	return fieldErrorsMap, errors.New("Plant with that name already exists.")
-	//}
-	//
-	//_, createErr := service.DB.CreatePlant(c, params)
-	//if createErr != nil {
-	//	return nil, createErr
-	//}
-	return nil, nil
+func (service PlantsDbService) CreatePlant(c context.Context, params postgres.CreatePlantParams) (postgres.Plant, error) {
+	newPlant, createErr := service.DB.CreatePlant(c, params)
+	if createErr != nil {
+		return postgres.Plant{}, createErr
+	}
+	return newPlant, nil
 }
 
-func (service PlantsDbService) DeletePlant(c echo.Context) error {
-	idParam := c.Param("id")
-	id, err := uuid.Parse(idParam)
-	if err != nil {
-		return err
-	}
-	_, err = service.DB.DeletePlant(c.Request().Context(), id)
+func (service PlantsDbService) DeletePlant(c context.Context, id uuid.UUID) error {
+	_, err := service.DB.DeletePlant(c, id)
 	if err != nil {
 		return err
 	}
