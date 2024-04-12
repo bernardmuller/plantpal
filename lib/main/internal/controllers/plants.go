@@ -1,6 +1,5 @@
 package controllers
 
-import "C"
 import (
 	"database/sql"
 	"domain-app/internal/config"
@@ -18,6 +17,18 @@ import (
 
 type PlantsController struct {
 	config *config.ApiConfig
+}
+
+type Controllers struct {
+	Plants *PlantsController
+}
+
+func NewControllers(ac config.ApiConfig) Controllers {
+	return Controllers{
+		Plants: &PlantsController{
+			config: &ac,
+		},
+	}
 }
 
 func (controller *PlantsController) GetAllPlants(c echo.Context) error {
