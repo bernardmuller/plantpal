@@ -1,35 +1,17 @@
 package config
 
 import (
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"io"
+	"fmt"
+	"net/http"
 )
 
-import (
-	"html/template"
-)
+func CreateRouter() *http.ServeMux {
+	mux := http.ServeMux{}
 
-type Templates struct {
-	templates *template.Template
-}
+	//mux.Handle("/static/images/", http.StripPrefix("/static/images/", http.FileServer(http.Dir("images"))))
+	//mux.Handle("/static/css/", http.StripPrefix("/static/css/", http.FileServer(http.Dir("css"))))
+	fmt.Println(http.Dir("views"))
+	//mux.Handle()
 
-func (t *Templates) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	return t.templates.ExecuteTemplate(w, name, data)
-}
-
-func newTemplate() *Templates {
-	return &Templates{
-		templates: template.Must(template.ParseGlob("internal/views/*.html")),
-	}
-}
-
-func CreateRouter() *echo.Echo {
-	e := echo.New()
-	e.Renderer = newTemplate()
-	e.Use(middleware.Logger())
-	e.Static("/static/images", "images")
-	e.Static("/static/css", "css")
-
-	return e
+	return &mux
 }

@@ -3,12 +3,12 @@ package config
 import (
 	"domain-app/internal/store/postgres"
 	"fmt"
-	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 type ApiConfig struct {
 	Database *postgres.Queries
-	Router   *echo.Echo
+	Router   *http.ServeMux
 	PORT     string
 }
 

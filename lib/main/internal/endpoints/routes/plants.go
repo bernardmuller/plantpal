@@ -3,7 +3,6 @@ package routes
 import (
 	"domain-app/internal/controllers"
 	"domain-app/internal/endpoints"
-	"domain-app/internal/store/postgres"
 )
 
 type Endpoints struct {
@@ -11,7 +10,7 @@ type Endpoints struct {
 }
 
 func (e *Endpoints) Endpoints() []endpoints.Endpoint {
-	var createPlantParams postgres.CreatePlantParams
+	//var createPlantParams postgres.CreatePlantParams
 	return []endpoints.Endpoint{
 		{
 			Path:         "/plants",
@@ -23,35 +22,35 @@ func (e *Endpoints) Endpoints() []endpoints.Endpoint {
 				Entity: nil,
 			},
 		},
-		{
-			Path:         "/plants/new",
-			Method:       "GET",
-			Controller:   e.Controllers.Plants.GetCreatePlantForm,
-			RequiresAuth: false,
-			Validation: endpoints.Validation{
-				Enable: false,
-				Entity: nil,
-			},
-		},
-		{
-			Path:         "/plants",
-			Method:       "POST",
-			Controller:   e.Controllers.Plants.CreatePlant,
-			RequiresAuth: false,
-			Validation: endpoints.Validation{
-				Enable: true,
-				Entity: &createPlantParams,
-			},
-		},
-		{
-			Path:         "/plants/:id",
-			Method:       "DELETE",
-			Controller:   e.Controllers.Plants.DeletePlant,
-			RequiresAuth: false,
-			Validation: endpoints.Validation{
-				Enable: false,
-				Entity: nil,
-			},
-		},
+		//{
+		//	Path:         "/plants/new",
+		//	Method:       "GET",
+		//	Controller:   e.Controllers.Plants.GetCreatePlantForm,
+		//	RequiresAuth: false,
+		//	Validation: endpoints.Validation{
+		//		Enable: false,
+		//		Entity: nil,
+		//	},
+		//},
+		//{
+		//	Path:         "/plants",
+		//	Method:       "POST",
+		//	Controller:   e.Controllers.Plants.CreatePlant,
+		//	RequiresAuth: false,
+		//	Validation: endpoints.Validation{
+		//		Enable: true,
+		//		Entity: &createPlantParams,
+		//	},
+		//},
+		//{
+		//	Path:         "/plants/:id",
+		//	Method:       "DELETE",
+		//	Controller:   e.Controllers.Plants.DeletePlant,
+		//	RequiresAuth: false,
+		//	Validation: endpoints.Validation{
+		//		Enable: false,
+		//		Entity: nil,
+		//	},
+		//},
 	}
 }

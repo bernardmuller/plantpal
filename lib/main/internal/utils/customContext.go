@@ -1,12 +1,21 @@
 package utils
 
-import "github.com/labstack/echo/v4"
+import (
+	"context"
+	"domain-app/internal/views"
+)
 
 type CustomContext struct {
-	echo.Context
-	Data interface{}
+	context.Context
+	Data     interface{}
+	Renderer *views.Templates
 }
 
 func (c CustomContext) SetData(data interface{}) {
-	c.Set("FormData", data)
+	//c("FormData", data)
+	c.Data = data
+}
+
+func (c CustomContext) SetRenderer(t *views.Templates) {
+	c.Renderer = t
 }

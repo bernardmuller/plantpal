@@ -5,6 +5,8 @@ import (
 	"domain-app/internal/controllers"
 	"domain-app/internal/endpoints"
 	"domain-app/internal/endpoints/routes"
+	"fmt"
+	"net/http"
 )
 
 func main() {
@@ -13,6 +15,7 @@ func main() {
 	apiEndpoints := routes.Endpoints{
 		Controllers: apiControllers,
 	}
+
 	factory := &endpoints.EndpointFactory{
 		ApiConfig: apiConfig,
 		Endpoints: apiEndpoints.Endpoints(),
@@ -30,5 +33,11 @@ func main() {
 	//	return context.JSON(http.StatusOK, data)
 	//})
 
-	apiConfig.Router.Logger.Fatal(apiConfig.Router.Start(apiConfig.PORT))
+	//apiConfig.Router.Logger.Fatal(apiConfig.Router.Start(apiConfig.PORT))
+	port := ":8080"
+	fmt.Printf("Server is listening on port %s\n", port)
+	err := http.ListenAndServe(port, apiConfig.Router)
+	if err != nil {
+		fmt.Printf("Error starting server: %s\n", err)
+	}
 }

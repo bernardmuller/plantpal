@@ -31,13 +31,25 @@ func NewControllers(ac config.ApiConfig) Controllers {
 	}
 }
 
-func (controller *PlantsController) GetAllPlants(c echo.Context) error {
-	plants, err := services.PlantsDbService{DB: controller.config.Database}.GetAllPlants(c.Request().Context())
+func (controller *PlantsController) GetAllPlants(w http.ResponseWriter, r *http.Request) {
+	// Retrieve plants from the database
+	plants, err := services.PlantsDbService{DB: controller.config.Database}.GetAllPlants(r.Context())
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "Error fetching plants")
+		http.Error(w, "Error fetching plants", http.StatusInternalServerError)
 	}
+
+	// Construct page data
 	pageData := model.Data{Plants: plants}
-	return c.Render(200, "index", model.NewPageData(pageData, model.NewFormData()))
+
+	// Render the response
+	c, ok := r.Context().Value("customContext").(utils.CustomContext)
+	if !ok {
+		// Handle the case where custom context is not found or of unexpected type
+		fmt.Println("Custom context not found")
+		http.Error(w, "Custom context not found", http.StatusInternalServerError)
+		return
+	}
+	c.Renderer.Render(w, "plants", pageData)
 }
 
 func (controller *PlantsController) GetCreatePlantForm(c echo.Context) error {

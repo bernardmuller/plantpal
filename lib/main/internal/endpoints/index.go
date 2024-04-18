@@ -5,7 +5,7 @@ import (
 	"domain-app/internal/middleware"
 	"domain-app/internal/store/postgres"
 	"errors"
-	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 type Validation struct {
@@ -14,7 +14,7 @@ type Validation struct {
 }
 
 type Endpoint struct {
-	Controller   func(c echo.Context) error
+	Controller   func(w http.ResponseWriter, r *http.Request)
 	Method       string
 	Path         string
 	Validation   Validation
@@ -75,25 +75,38 @@ type EndpointFactory struct {
 //	}
 //}
 
+//func Authorise() {
+//	return clerkhttp.WithHeaderAuthorization()
+//}
+
 func (f EndpointFactory) createEndpoint(endpoint Endpoint) error {
-	if endpoint.Method != "GET" &&
-		endpoint.Method != "POST" &&
-		endpoint.Method != "PUT" &&
-		endpoint.Method != "PATCH" &&
-		endpoint.Method != "DELETE" {
+
+	switch endpoint.Method {
+	case "GET", "POST", "PUT", "PATCH", "DELETE":
+	default:
 		return errors.New("Invalid method on endpoint creation")
 	}
-	var middlewareFunctions []echo.MiddlewareFunc
+
+	var middlewareFunctions []func(http.Handler) http.Handler
 	middlewareFunctions = append(middlewareFunctions, middleware.CreateCustomContext)
-	//if endpoint.RequiresAuth {
-	//	middlewareFunctions = append(middlewareFunctions, SomeMiddleware)
-	//}
-	//if endpoint.Validation.Enable {
-	//	middlewareFunctions = append(middlewareFunctions, func(next echo.HandlerFunc) echo.HandlerFunc {
-	//		return ParseEndpointParams(next, &endpoint.Validation.Entity)
-	//	})
-	//}
-	f.ApiConfig.Router.Add(endpoint.Method, endpoint.Path, endpoint.Controller, middlewareFunctions...)
+
+	if endpoint.RequiresAuth {
+		// Add authentication middleware
+	}
+
+	// Add validation middleware if enabled
+	if endpoint.Validation.Enable {
+		// Add validation middleware
+	}
+
+	// Chain the middleware functions
+	var handler http.Handler = http.HandlerFunc(endpoint.Controller)
+	for _, middlewareFunc := range middlewareFunctions {
+		handler = middlewareFunc(handler)
+	}
+
+	// Add the endpoint to the router
+	f.ApiConfig.Router.HandleFunc(endpoint.Path, endpoint.Controller)
 	return nil
 }
 

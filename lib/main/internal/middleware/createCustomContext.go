@@ -1,18 +1,29 @@
 package middleware
 
 import (
+	"context"
 	"domain-app/internal/utils"
-	"github.com/labstack/echo/v4"
+	"domain-app/internal/views"
+	"fmt"
+	"net/http"
 )
 
-func CreateCustomContext(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
+func CreateCustomContext(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Create custom context
+		renderer := views.NewTemplate()
+
 		customContext := utils.CustomContext{
-			Context: c,
-			Data:    nil,
+			Context:  context.Background(),
+			Data:     nil,
+			Renderer: renderer,
 		}
 
-		cc := customContext
-		return next(cc)
-	}
+		// Pass the custom context to the request context
+		ctx := context.WithValue(r.Context(), "customContext", customContext)
+
+		fmt.Println("Custom context created")
+		// Call the next handler with the new context
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
