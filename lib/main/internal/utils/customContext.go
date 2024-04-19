@@ -4,7 +4,8 @@ import "github.com/labstack/echo/v4"
 
 type CustomContext struct {
 	echo.Context
-	Data interface{}
+	Data        interface{}
+	CurrentUser interface{}
 }
 
 func (c CustomContext) SetData(data interface{}) {

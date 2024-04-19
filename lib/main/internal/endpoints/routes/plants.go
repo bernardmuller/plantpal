@@ -10,7 +10,7 @@ type Endpoints struct {
 	Controllers controllers.Controllers
 }
 
-func (e *Endpoints) Endpoints() []endpoints.Endpoint {
+func (e *Endpoints) PlantEndpoints() []endpoints.Endpoint {
 	var createPlantParams postgres.CreatePlantParams
 	return []endpoints.Endpoint{
 		{

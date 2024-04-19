@@ -75,6 +75,29 @@ type EndpointFactory struct {
 //	}
 //}
 
+type Temp struct {
+	UserId string
+}
+
+func protectedRoute(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		//if !ok {
+		//	return c.String(http.StatusUnauthorized, `{"access": "unauthorized"}`)
+		//}
+		//
+		//authContext := utils.CustomContext{
+		//	Context: c,
+		//	Data:    c.Get("Data"),
+		//	CurrentUser: Temp{
+		//		UserId: claims.Subject,
+		//	},
+		//}
+		//
+		//cc := authContext
+		return next(c)
+	}
+}
+
 func (f EndpointFactory) createEndpoint(endpoint Endpoint) error {
 	if endpoint.Method != "GET" &&
 		endpoint.Method != "POST" &&
@@ -85,9 +108,9 @@ func (f EndpointFactory) createEndpoint(endpoint Endpoint) error {
 	}
 	var middlewareFunctions []echo.MiddlewareFunc
 	middlewareFunctions = append(middlewareFunctions, middleware.CreateCustomContext)
-	//if endpoint.RequiresAuth {
-	//	middlewareFunctions = append(middlewareFunctions, SomeMiddleware)
-	//}
+	if endpoint.RequiresAuth {
+		middlewareFunctions = append(middlewareFunctions, protectedRoute)
+	}
 	//if endpoint.Validation.Enable {
 	//	middlewareFunctions = append(middlewareFunctions, func(next echo.HandlerFunc) echo.HandlerFunc {
 	//		return ParseEndpointParams(next, &endpoint.Validation.Entity)

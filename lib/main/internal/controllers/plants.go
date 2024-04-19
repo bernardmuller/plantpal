@@ -21,6 +21,7 @@ type PlantsController struct {
 
 type Controllers struct {
 	Plants *PlantsController
+	Auth   *AuthController
 }
 
 func NewControllers(ac config.ApiConfig) Controllers {
