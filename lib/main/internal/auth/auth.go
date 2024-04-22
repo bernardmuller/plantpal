@@ -16,7 +16,7 @@ const (
 	isProd = false
 )
 
-func newAuth() {
+func NewAuth() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -35,6 +35,6 @@ func newAuth() {
 	gothic.Store = store
 
 	goth.UseProviders(
-		google.New(googleClientID, googleClientSecret, "http://localhost:8080/plants"),
+		google.New(googleClientID, googleClientSecret, "http://localhost:8080/auth/google/callback"),
 	)
 }
