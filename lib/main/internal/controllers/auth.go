@@ -27,13 +27,18 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 		return err
 	}
 	fmt.Println("Authenticated user: ", user)
+	
 	http.Redirect(c.Response(), req, "/plants", http.StatusFound)
 	return nil
 }
 
 func (controller *AuthController) Logout(c echo.Context) error {
+	q := c.Request().URL.Query()
+	q.Add("provider", "google")
+	c.Request().URL.RawQuery = q.Encode()
+
 	gothic.Logout(c.Response(), c.Request())
-	c.Response().Header().Set("Location", "/")
+	c.Response().Header().Set("Location", "/auth/login")
 	c.Response().WriteHeader(http.StatusTemporaryRedirect)
 	return nil
 }

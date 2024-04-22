@@ -17,7 +17,7 @@ func (e *Endpoints) PlantEndpoints() []endpoints.Endpoint {
 			Path:         "/plants",
 			Method:       "GET",
 			Controller:   e.Controllers.Plants.GetAllPlants,
-			RequiresAuth: false,
+			RequiresAuth: true,
 			Validation: endpoints.Validation{
 				Enable: false,
 				Entity: nil,

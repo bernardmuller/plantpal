@@ -81,6 +81,15 @@ type Temp struct {
 
 func protectedRoute(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		q := c.Request().URL.Query()
+		q.Add("provider", "google")
+		c.Request().URL.RawQuery = q.Encode()
+
+		//_, err := gothic.CompleteUserAuth(c.Response(), c.Request())
+		//if err != nil {
+		//	http.Redirect(c.Response(), c.Request(), "/auth/login", http.StatusTemporaryRedirect)
+		//	return err
+		//}
 		//if !ok {
 		//	return c.String(http.StatusUnauthorized, `{"access": "unauthorized"}`)
 		//}
