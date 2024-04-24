@@ -3,8 +3,6 @@ package controllers
 import (
 	"context"
 	"database/sql"
-	"domain-app/internal/config"
-	"domain-app/internal/services"
 	"domain-app/internal/store/postgres"
 	"fmt"
 	"github.com/google/uuid"
@@ -14,10 +12,6 @@ import (
 	"net/http"
 )
 
-type AuthController struct {
-	config *config.ApiConfig
-}
-
 func (controller *AuthController) GetLoginPage(c echo.Context) error {
 	return c.Render(200, "login", nil)
 }
@@ -26,23 +20,16 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 	req := c.Request().WithContext(context.WithValue(context.Background(), "provider", "google"))
 	googleUser, err := gothic.CompleteUserAuth(c.Response(), c.Request())
 	if err != nil {
-		fmt.Println("Error while Completing Google Auth: ", err)
+		log.Println("Error while Completing Google Auth: ", err)
 		return err
 	}
-	fmt.Println("Authenticated googleUser: ", googleUser)
 
 	var newUser *postgres.User
-	fmt.Println("testtest")
-	userService := services.UserDBService{DB: controller.config.Database}
-
-	fmt.Println("testtest12")
 	userIp := c.Request().RemoteAddr
-	fmt.Println("test1")
-	dbUser, err := userService.GetUserByEmail(c.Request().Context(), googleUser.Email)
+	dbUser, err := controller.userService.GetUserByEmail(c.Request().Context(), googleUser.Email)
 	if err != nil {
-		fmt.Println("test2")
 		userId := uuid.New()
-		newDbUser, err := userService.CreateUser(c.Request().Context(), postgres.CreateUserParams{
+		newDbUser, err := controller.userService.CreateUser(c.Request().Context(), postgres.CreateUserParams{
 			ID:        userId,
 			Email:     googleUser.Email,
 			Firstname: googleUser.FirstName,
@@ -51,13 +38,12 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 			Image:     sql.NullString{String: googleUser.AvatarURL, Valid: true},
 		})
 		if err != nil {
-			log.Fatal("Error creating new googleUser: ", err)
+			log.Println("Error creating new googleUser: ", err)
 			return err
 		}
 		newUser = &newDbUser
-		fmt.Println("test2a")
 		sessionId := uuid.New()
-		newSession, sessionErr := services.AuthDBService{DB: controller.config.Database}.CreateSession(c.Request().Context(), postgres.CreateSessionParams{
+		newSession, sessionErr := controller.authService.CreateSession(c.Request().Context(), postgres.CreateSessionParams{
 			ID:          sessionId,
 			UserID:      newUser.ID,
 			Expires:     googleUser.ExpiresAt,
@@ -65,20 +51,23 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 			AccessToken: googleUser.AccessToken,
 		})
 		if sessionErr != nil {
-			log.Fatal("Error creating new session: ", err)
+			log.Println("Error creating new session: ", err)
 			return err
 		}
-		fmt.Println("test2b")
 		http.SetCookie(c.Response(), &http.Cookie{
-			Name:  "plant_session",
-			Value: newSession.ID.String(),
+			Name:     "plant_session",
+			Value:    newSession.ID.String(),
+			Secure:   false,
+			HttpOnly: true,
+			Expires:  googleUser.ExpiresAt,
+			Path:     "/auth/logout",
 		})
 		http.Redirect(c.Response(), req, "/plants", http.StatusFound)
 	}
 
 	sessionId := uuid.New()
 
-	newSession, sessionErr := services.AuthDBService{DB: controller.config.Database}.CreateSession(c.Request().Context(), postgres.CreateSessionParams{
+	newSession, sessionErr := controller.authService.CreateSession(c.Request().Context(), postgres.CreateSessionParams{
 		ID:          sessionId,
 		UserID:      dbUser.ID,
 		Expires:     googleUser.ExpiresAt,
@@ -100,11 +89,16 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 }
 
 func (controller *AuthController) Logout(c echo.Context) error {
+	fmt.Println(c.Request())
 	q := c.Request().URL.Query()
 	q.Add("provider", "google")
 	c.Request().URL.RawQuery = q.Encode()
 
 	// get the cookie
+	cookies := c.Request().Cookies()
+	for _, cookie := range cookies {
+		fmt.Println("Cookie: ", cookie.Name, cookie.Value)
+	}
 	cookie, err := c.Request().Cookie("plant_session")
 	if err != nil {
 		fmt.Println("Error getting cookie: ", err)
@@ -116,7 +110,7 @@ func (controller *AuthController) Logout(c echo.Context) error {
 		return err
 	}
 
-	err = services.AuthDBService{DB: controller.config.Database}.DeleteSessionById(c.Request().Context(), sessionId)
+	err = controller.authService.DeleteSessionById(c.Request().Context(), sessionId)
 	if err != nil {
 		fmt.Println("Error deleting session: ", err)
 		return err

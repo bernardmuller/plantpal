@@ -46,6 +46,16 @@ func (e *Endpoints) AuthEndpoints() []endpoints.Endpoint {
 				Entity: nil,
 			},
 		},
+		{
+			Path:         "/auth/logout",
+			Method:       "POST",
+			Controller:   e.Controllers.Auth.Logout,
+			RequiresAuth: false,
+			Validation: endpoints.Validation{
+				Enable: false,
+				Entity: nil,
+			},
+		},
 	}
 }
 

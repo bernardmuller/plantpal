@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"database/sql"
-	"domain-app/internal/config"
 	"domain-app/internal/model"
 	"domain-app/internal/services"
 	"domain-app/internal/store/postgres"
@@ -14,23 +13,6 @@ import (
 	"net/http"
 	"reflect"
 )
-
-type PlantsController struct {
-	config *config.ApiConfig
-}
-
-type Controllers struct {
-	Plants *PlantsController
-	Auth   *AuthController
-}
-
-func NewControllers(ac config.ApiConfig) Controllers {
-	return Controllers{
-		Plants: &PlantsController{
-			config: &ac,
-		},
-	}
-}
 
 func (controller *PlantsController) GetAllPlants(c echo.Context) error {
 	plants, err := services.PlantsDbService{DB: controller.config.Database}.GetAllPlants(c.Request().Context())
