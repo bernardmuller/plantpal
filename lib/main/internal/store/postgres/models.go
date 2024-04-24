@@ -33,6 +33,16 @@ type Plant struct {
 	Use            sql.NullString
 }
 
+type Session struct {
+	ID          uuid.UUID
+	UserID      uuid.UUID
+	AccessToken string
+	Expires     time.Time
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	IpAddress   string
+}
+
 type User struct {
 	ID        uuid.UUID
 	Email     string
@@ -40,6 +50,8 @@ type User struct {
 	Lastname  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	Provider  sql.NullString
+	Image     sql.NullString
 }
 
 type UserPlant struct {
