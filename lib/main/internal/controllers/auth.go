@@ -60,7 +60,7 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 			Secure:   false,
 			HttpOnly: true,
 			Expires:  googleUser.ExpiresAt,
-			Path:     "/auth/logout",
+			Path:     "/",
 		})
 		http.Redirect(c.Response(), req, "/plants", http.StatusFound)
 	}
@@ -80,9 +80,12 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 	}
 
 	http.SetCookie(c.Response(), &http.Cookie{
-		Name:    "plant_session",
-		Value:   newSession.ID.String(),
-		Expires: googleUser.ExpiresAt,
+		Name:     "plant_session",
+		Value:    newSession.ID.String(),
+		Expires:  googleUser.ExpiresAt,
+		Path:     "/",
+		Secure:   false,
+		HttpOnly: true,
 	})
 	http.Redirect(c.Response(), req, "/plants", http.StatusFound)
 	return nil
@@ -118,8 +121,15 @@ func (controller *AuthController) Logout(c echo.Context) error {
 
 	gothic.Logout(c.Response(), c.Request())
 
-	c.Response().Header().Set("Location", "/auth/login")
-	c.Response().WriteHeader(http.StatusTemporaryRedirect)
+	http.SetCookie(c.Response(), &http.Cookie{
+		Name:     "plant_session",
+		Value:    "",
+		Path:     "/",
+		Secure:   false,
+		HttpOnly: true,
+	})
+
+	http.Redirect(c.Response(), c.Request(), "/auth/login", http.StatusPermanentRedirect)
 	return nil
 }
 

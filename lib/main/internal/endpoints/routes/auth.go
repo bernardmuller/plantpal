@@ -28,7 +28,7 @@ func (e *Endpoints) AuthEndpoints() []endpoints.Endpoint {
 		},
 		{
 			Path:         "/auth/logout/google",
-			Method:       "POST",
+			Method:       "GET",
 			Controller:   e.Controllers.Auth.Logout,
 			RequiresAuth: true,
 			Validation: endpoints.Validation{
@@ -46,16 +46,16 @@ func (e *Endpoints) AuthEndpoints() []endpoints.Endpoint {
 				Entity: nil,
 			},
 		},
-		{
-			Path:         "/auth/logout",
-			Method:       "POST",
-			Controller:   e.Controllers.Auth.Logout,
-			RequiresAuth: false,
-			Validation: endpoints.Validation{
-				Enable: false,
-				Entity: nil,
-			},
-		},
+		//{
+		//	Path:         "/auth/logout",
+		//	Method:       "POST",
+		//	Controller:   e.Controllers.Auth.Logout,
+		//	RequiresAuth: false,
+		//	Validation: endpoints.Validation{
+		//		Enable: false,
+		//		Entity: nil,
+		//	},
+		//},
 	}
 }
 

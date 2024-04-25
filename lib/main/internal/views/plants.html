@@ -10,7 +10,12 @@
                 Create Plant
             </button>
         </a>
-        <button hx-post="/auth/logout/google?provider=google" class="btn btn-secondary">
+        <button
+            hx-get="/auth/logout/google?provider=google"
+            hx-swap="outerHTML"
+            hx-target="body"
+            class="btn btn-secondary"
+        >
             Logout
         </button>
     </div>
