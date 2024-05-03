@@ -6,6 +6,7 @@ import (
 	"domain-app/internal/services"
 	"domain-app/internal/store/postgres"
 	"domain-app/internal/utils"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
@@ -19,8 +20,10 @@ func (controller *PlantsController) GetAllPlants(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "Error fetching plants")
 	}
-	pageData := model.Data{Plants: plants}
-	return c.Render(200, "index", model.NewPageData(pageData, model.NewFormData()))
+	//pageData := model.Data{Plants: plants}
+	//return c.Render(200, "index", model.NewPageData(pageData, model.NewFormData()))
+	json.NewEncoder(c.Response()).Encode(plants)
+	return nil
 }
 
 func (controller *PlantsController) GetCreatePlantForm(c echo.Context) error {

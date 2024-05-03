@@ -6,7 +6,8 @@ import (
 )
 
 type PlantsController struct {
-	config *config.ApiConfig
+	config      *config.ApiConfig
+	authService *services.AuthDBService
 }
 
 type AuthController struct {

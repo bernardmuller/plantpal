@@ -1,31 +1,28 @@
+<!--export const prerender = true;-->
 <script>
-    import {createQuery} from '@tanstack/svelte-query'
-    import {fetchTodos} from "../lib/api/fetchTodos";
+    import {createQuery, useQueryClient} from '@tanstack/svelte-query'
+    import {Button} from "$lib/components/ui/button";
+    import {Skeleton} from "$lib/components/ui/skeleton";
+    import {login} from "$lib/api/login";
+    import {getAllPlants} from "$lib/api/getAllPlants";
 
-    const todosQuery = createQuery({
-        queryKey: ['todos'],
-        queryFn: () => fetchTodos(),
+    export let data
+    const queryClient = useQueryClient()
+    const plantsQuery = createQuery({
+        queryKey: ['plants'],
+        queryFn: () => getAllPlants(),
+        initialData: data.plants ?? []
     })
 
-    // @ts-ignore: data will exist, not sure why it's not being picked up
-    console.log(todosQuery.data)
-
+    // const handleLogin = async () => {
+    //     // await login().catch((err) => console.log("Error", err))
+    // }
 </script>
 
 
-<h1>Welcome to SvelteKit</h1>
-<div>
-    {#if $todosQuery.isLoading}
-        <p>Loading...</p>
-    {:else if $todosQuery.isError}
-        <p>Error: {$todosQuery.error.message}</p>
-    {:else if $todosQuery.isSuccess}
-        {#each $todosQuery.data as todo}
-            <div class="flex gap-4">
-                <p class="font-semibold">{todo.id}</p>
-                <p>{todo.title}</p>
-                <p class={todo.completed ? `text-green-300` : "text-stone-400" }>{todo.completed ? "Done" : "To Do"}</p>
-            </div>
-        {/each}
-    {/if}
+<div class="w-full flex justify-between">
+    <h1>Welcome to PlantPal</h1>
+    <a href="http://localhost:8080/auth/google?provider=google">
+        Log in with Google
+    </a>
 </div>

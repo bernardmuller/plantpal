@@ -3,7 +3,7 @@ import axios from "axios";
 
 type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-type APIResponse<T> = {
+export type APIResponse<T> = {
   ok: boolean;
   status: number;
   data?: T;
@@ -14,6 +14,8 @@ const getHeaders = ({ accessToken }: { accessToken?: string }) => {
   return {
     // Authorization: `Bearer ${accessToken}`,
     // add your headers here
+    "Access-Control-Allow-Origin": "*",
+    // "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
   };
 };
 
@@ -27,15 +29,15 @@ export const httpRequest = async <T, D>(
   },
 ): Promise<APIResponse<T>> => {
   try {
-    // const customHeaders = getHeaders({
-    //   accessToken: options?.accessToken,
-    // });
+    const customHeaders = getHeaders({
+      accessToken: options?.accessToken,
+    });
     const response: AxiosResponse<T> = await axios({
       method,
       url,
       headers: {
         ...options?.headers,
-        // ...customHeaders,
+        ...customHeaders,
       },
       data,
     });

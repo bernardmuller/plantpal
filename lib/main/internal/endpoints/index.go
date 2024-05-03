@@ -81,28 +81,25 @@ type Temp struct {
 
 func protectedRoute(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		q := c.Request().URL.Query()
-		q.Add("provider", "google")
-		c.Request().URL.RawQuery = q.Encode()
-
-		//_, err := gothic.CompleteUserAuth(c.Response(), c.Request())
+		//q := c.Request().URL.Query()
+		//q.Add("provider", "google")
+		//c.Request().URL.RawQuery = q.Encode()
+		//
+		//cookie, err := c.Request().Cookie("plant_session")
+		//if err != nil || cookie == nil {
+		//	http.Redirect(c.Response(), c.Request(), "/auth/login?error=unauthorized", http.StatusTemporaryRedirect)
+		//}
+		//db := c.Request().Context().Value("DB")
+		//parsedID, err := uuid.Parse(cookie.Value)
 		//if err != nil {
-		//	http.Redirect(c.Response(), c.Request(), "/auth/login", http.StatusTemporaryRedirect)
-		//	return err
+		//	http.Redirect(c.Response(), c.Request(), "/auth/login?error=unauthorized", http.StatusTemporaryRedirect)
 		//}
-		//if !ok {
-		//	return c.String(http.StatusUnauthorized, `{"access": "unauthorized"}`)
+		//fmt.Println("test")
+		//_, err = services.AuthDBService{DB: db}.GetSessionById(c.Request().Context(), parsedID)
+		//if err != nil {
+		//	http.Redirect(c.Response(), c.Request(), "/auth/login?error=unauthorized", http.StatusTemporaryRedirect)
 		//}
-		//
-		//authContext := utils.CustomContext{
-		//	Context: c,
-		//	Data:    c.Get("Data"),
-		//	CurrentUser: Temp{
-		//		UserId: claims.Subject,
-		//	},
-		//}
-		//
-		//cc := authContext
+
 		return next(c)
 	}
 }
@@ -120,11 +117,6 @@ func (f EndpointFactory) createEndpoint(endpoint Endpoint) error {
 	if endpoint.RequiresAuth {
 		middlewareFunctions = append(middlewareFunctions, protectedRoute)
 	}
-	//if endpoint.Validation.Enable {
-	//	middlewareFunctions = append(middlewareFunctions, func(next echo.HandlerFunc) echo.HandlerFunc {
-	//		return ParseEndpointParams(next, &endpoint.Validation.Entity)
-	//	})
-	//}
 	f.ApiConfig.Router.Add(endpoint.Method, endpoint.Path, endpoint.Controller, middlewareFunctions...)
 	return nil
 }

@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"context"
 	"database/sql"
 	"domain-app/internal/store/postgres"
+	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -13,11 +13,27 @@ import (
 )
 
 func (controller *AuthController) GetLoginPage(c echo.Context) error {
+
 	return c.Render(200, "login", nil)
 }
 
 func (controller *AuthController) GetCallback(c echo.Context) error {
-	req := c.Request().WithContext(context.WithValue(context.Background(), "provider", "google"))
+	//cookie, err := c.Request().Cookie("plant_session")
+	//if err != nil {
+	//	http.Redirect(c.Response(), c.Request(), "/auth/login", http.StatusFound)
+	//}
+	//
+	//sessionId, err := uuid.Parse(cookie.Value)
+	//if err != nil {
+	//	http.Redirect(c.Response(), c.Request(), "/auth/login", http.StatusFound)
+	//}
+	//
+	//_, err = controller.authService.GetSessionById(c.Request().Context(), sessionId)
+	//if err == nil {
+	//	http.Redirect(c.Response(), c.Request(), "/plants", http.StatusFound)
+	//}
+
+	//req := c.Request().WithContext(context.WithValue(context.Background(), "provider", "google"))
 	googleUser, err := gothic.CompleteUserAuth(c.Response(), c.Request())
 	if err != nil {
 		log.Println("Error while Completing Google Auth: ", err)
@@ -62,13 +78,13 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 			Expires:  googleUser.ExpiresAt,
 			Path:     "/",
 		})
-		http.Redirect(c.Response(), req, "/plants", http.StatusFound)
+		json.NewEncoder(c.Response()).Encode(newUser)
 	}
 
-	sessionId := uuid.New()
+	newSessionId := uuid.New()
 
 	newSession, sessionErr := controller.authService.CreateSession(c.Request().Context(), postgres.CreateSessionParams{
-		ID:          sessionId,
+		ID:          newSessionId,
 		UserID:      dbUser.ID,
 		Expires:     googleUser.ExpiresAt,
 		IpAddress:   userIp,
@@ -87,7 +103,9 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 		Secure:   false,
 		HttpOnly: true,
 	})
-	http.Redirect(c.Response(), req, "/plants", http.StatusFound)
+
+	//json.NewEncoder(c.Response()).Encode(dbUser)
+	http.Redirect(c.Response(), c.Request(), "http://localhost:5173/plants", http.StatusTemporaryRedirect)
 	return nil
 }
 
@@ -97,11 +115,6 @@ func (controller *AuthController) Logout(c echo.Context) error {
 	q.Add("provider", "google")
 	c.Request().URL.RawQuery = q.Encode()
 
-	// get the cookie
-	cookies := c.Request().Cookies()
-	for _, cookie := range cookies {
-		fmt.Println("Cookie: ", cookie.Name, cookie.Value)
-	}
 	cookie, err := c.Request().Cookie("plant_session")
 	if err != nil {
 		fmt.Println("Error getting cookie: ", err)
@@ -129,17 +142,15 @@ func (controller *AuthController) Logout(c echo.Context) error {
 		HttpOnly: true,
 	})
 
-	http.Redirect(c.Response(), c.Request(), "/auth/login", http.StatusPermanentRedirect)
+	json.NewEncoder(c.Response()).Encode("Logged out")
 	return nil
 }
 
 func (controller *AuthController) GetProvider(c echo.Context) error {
-	q := c.Request().URL.Query()
-	q.Add("provider", "google")
-	c.Request().URL.RawQuery = q.Encode()
+	fmt.Println("Get Provider => ", c.Request().URL.Query().Get("provider"))
 
 	if gothUser, err := gothic.CompleteUserAuth(c.Response(), c.Request()); err == nil {
-		fmt.Println("Get Provider => ", gothUser)
+		fmt.Println("User => ", gothUser)
 		return nil
 	} else {
 		gothic.BeginAuthHandler(c.Response(), c.Request())

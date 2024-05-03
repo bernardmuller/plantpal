@@ -11,6 +11,7 @@ import (
 func main() {
 
 	auth.NewAuth()
+
 	apiConfig := config.CreateAPIConfig()
 	apiControllers := controllers.NewControllers(*apiConfig)
 	apiEndpoints := routes.Endpoints{
@@ -33,6 +34,9 @@ func main() {
 	//	return context.JSON(http.StatusOK, data)
 	//})
 
+	//handler := cors.Default().Handler(mux)
+	//http.ListenAndServe(":8080", handler)
+	//server := apiConfig.Router.Start(apiConfig.PORT)
 	apiConfig.Router.Logger.Fatal(apiConfig.Router.Start(apiConfig.PORT))
 
 }
