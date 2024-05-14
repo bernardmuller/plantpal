@@ -147,8 +147,6 @@ func (controller *AuthController) Logout(c echo.Context) error {
 }
 
 func (controller *AuthController) GetProvider(c echo.Context) error {
-	fmt.Println("Get Provider => ", c.Request().URL.Query().Get("provider"))
-
 	if gothUser, err := gothic.CompleteUserAuth(c.Response(), c.Request()); err == nil {
 		fmt.Println("User => ", gothUser)
 		return nil

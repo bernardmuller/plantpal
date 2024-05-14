@@ -1,33 +1,26 @@
 <!--export const prerender = true;-->
 <script>
     import {createQuery, useQueryClient} from '@tanstack/svelte-query'
-    import {Button} from "$lib/components/ui/button";
     import {Skeleton} from "$lib/components/ui/skeleton";
-    import {login} from "$lib/api/login";
     import {getAllPlants} from "$lib/api/getAllPlants";
 
     export let data
-    const queryClient = useQueryClient()
+    // const queryClient = useQueryClient()
     const plantsQuery = createQuery({
         queryKey: ['plants'],
         queryFn: () => getAllPlants(),
-        // initialData: data.plants ?? []
+        initialData: data.plants || [],
     })
 
-    // const handleLogin = async () => {
-    //     // await login().catch((err) => console.log("Error", err))
-    // }
+    const currentUser = data.currentUser
+
 </script>
 
 
-<div class="w-full flex justify-between">
+<div class="w-full flex justify-between py-4">
     <h1>Your Plants</h1>
-<!--    <Button-->
-<!--            on:click={handleLogin}-->
-<!--    >-->
-
-<!--    </Button>-->
 </div>
+
 <div>
     {#if $plantsQuery.isFetching}
         <div class="flex flex-col gap-4">

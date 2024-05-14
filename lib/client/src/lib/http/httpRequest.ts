@@ -13,9 +13,8 @@ export type APIResponse<T> = {
 const getHeaders = ({ accessToken }: { accessToken?: string }) => {
   return {
     // Authorization: `Bearer ${accessToken}`,
-    // add your headers here
     "Access-Control-Allow-Origin": "*",
-    // "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+    "Access-Control-Allow-Credentials": "true"
   };
 };
 

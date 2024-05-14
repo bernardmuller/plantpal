@@ -16,9 +16,16 @@ type AuthController struct {
 	authService *services.AuthDBService
 }
 
+type UsersController struct {
+	config      *config.ApiConfig
+	userService *services.UserDBService
+	authService *services.AuthDBService
+}
+
 type Controllers struct {
 	Plants *PlantsController
 	Auth   *AuthController
+	Users  *UsersController
 }
 
 func NewControllers(ac config.ApiConfig) Controllers {
