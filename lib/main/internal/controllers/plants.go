@@ -16,6 +16,8 @@ import (
 )
 
 func (controller *PlantsController) GetAllPlants(c echo.Context) error {
+	fmt.Println("query => ", c.Request().URL.Query().Get("user"))
+
 	plants, err := services.PlantsDbService{DB: controller.config.Database}.GetAllPlants(c.Request().Context())
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "Error fetching plants")

@@ -3,9 +3,13 @@ package endpoints
 import (
 	"domain-app/internal/config"
 	"domain-app/internal/middleware"
+	"domain-app/internal/services"
 	"domain-app/internal/store/postgres"
 	"errors"
+	"fmt"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 type Validation struct {
@@ -79,26 +83,26 @@ type Temp struct {
 	UserId string
 }
 
-func protectedRoute(next echo.HandlerFunc) echo.HandlerFunc {
+func (f EndpointFactory) protectedRoute(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+
 		//q := c.Request().URL.Query()
 		//q.Add("provider", "google")
 		//c.Request().URL.RawQuery = q.Encode()
 		//
-		//cookie, err := c.Request().Cookie("plant_session")
-		//if err != nil || cookie == nil {
-		//	http.Redirect(c.Response(), c.Request(), "/auth/login?error=unauthorized", http.StatusTemporaryRedirect)
-		//}
-		//db := c.Request().Context().Value("DB")
-		//parsedID, err := uuid.Parse(cookie.Value)
-		//if err != nil {
-		//	http.Redirect(c.Response(), c.Request(), "/auth/login?error=unauthorized", http.StatusTemporaryRedirect)
-		//}
-		//fmt.Println("test")
-		//_, err = services.AuthDBService{DB: db}.GetSessionById(c.Request().Context(), parsedID)
-		//if err != nil {
-		//	http.Redirect(c.Response(), c.Request(), "/auth/login?error=unauthorized", http.StatusTemporaryRedirect)
-		//}
+		cookie, err := c.Request().Cookie("plant_session")
+		if err != nil || cookie == nil {
+			fmt.Errorf("error: %v", err)
+		}
+		parsedID, err := uuid.Parse(cookie.Value)
+		if err != nil {
+			http.Redirect(c.Response(), c.Request(), "/auth/login?error=unauthorized", http.StatusTemporaryRedirect)
+		}
+		fmt.Println("test")
+		_, err = services.AuthDBService{DB: f.ApiConfig.Database}.GetSessionById(c.Request().Context(), parsedID)
+		if err != nil {
+			http.Redirect(c.Response(), c.Request(), "/auth/login?error=unauthorized", http.StatusTemporaryRedirect)
+		}
 
 		return next(c)
 	}
