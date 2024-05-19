@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"domain-app/internal/auth"
 	"domain-app/internal/store/postgres"
 	"encoding/json"
 	"fmt"
@@ -12,33 +13,25 @@ import (
 	"net/http"
 )
 
+type Payload struct {
+	SessionId string
+}
+
 func (controller *AuthController) GetLoginPage(c echo.Context) error {
 
 	return c.Render(200, "login", nil)
 }
 
 func (controller *AuthController) GetCallback(c echo.Context) error {
-	//cookie, err := c.Request().Cookie("plant_session")
-	//if err != nil {
-	//	http.Redirect(c.Response(), c.Request(), "/auth/login", http.StatusFound)
-	//}
-	//
-	//sessionId, err := uuid.Parse(cookie.Value)
-	//if err != nil {
-	//	http.Redirect(c.Response(), c.Request(), "/auth/login", http.StatusFound)
-	//}
-	//
-	//_, err = controller.authService.GetSessionById(c.Request().Context(), sessionId)
-	//if err == nil {
-	//	http.Redirect(c.Response(), c.Request(), "/plants", http.StatusFound)
-	//}
+	// TODO: check if user is already logged in with jwt from Auth header
 
-	//req := c.Request().WithContext(context.WithValue(context.Background(), "provider", "google"))
 	googleUser, err := gothic.CompleteUserAuth(c.Response(), c.Request())
 	if err != nil {
 		log.Println("Error while Completing Google Auth: ", err)
 		return err
 	}
+
+	fmt.Printf("Google User: %v\n", googleUser)
 
 	var newUser *postgres.User
 	userIp := c.Request().RemoteAddr
@@ -70,15 +63,18 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 			log.Println("Error creating new session: ", err)
 			return err
 		}
-		http.SetCookie(c.Response(), &http.Cookie{
-			Name:     "plant_session",
-			Value:    newSession.ID.String(),
-			Secure:   false,
-			HttpOnly: true,
-			Expires:  googleUser.ExpiresAt,
-			Path:     "/",
-		})
-		json.NewEncoder(c.Response()).Encode(newUser)
+
+		jwtPayload := Payload{
+			SessionId: newSession.ID.String(),
+		}
+
+		jwt, err := auth.CreateToken(jwtPayload)
+		if err != nil {
+			return err
+		}
+
+		http.Redirect(c.Response(), c.Request(), "http://localhost:5173/auth/callback?token="+jwt, http.StatusTemporaryRedirect)
+		return nil
 	}
 
 	newSessionId := uuid.New()
@@ -95,17 +91,16 @@ func (controller *AuthController) GetCallback(c echo.Context) error {
 		return err
 	}
 
-	http.SetCookie(c.Response(), &http.Cookie{
-		Name:     "plant_session",
-		Value:    newSession.ID.String(),
-		Expires:  googleUser.ExpiresAt,
-		Path:     "/",
-		Secure:   false,
-		HttpOnly: true,
-	})
+	jwtPayload := Payload{
+		SessionId: newSession.ID.String(),
+	}
 
-	//json.NewEncoder(c.Response()).Encode(dbUser)
-	http.Redirect(c.Response(), c.Request(), "http://localhost:5173/plants", http.StatusTemporaryRedirect)
+	jwt, err := auth.CreateToken(jwtPayload)
+	if err != nil {
+		return err
+	}
+
+	http.Redirect(c.Response(), c.Request(), "http://localhost:5173/auth/callback?token="+jwt, http.StatusTemporaryRedirect)
 	return nil
 }
 

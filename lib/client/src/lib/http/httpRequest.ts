@@ -14,7 +14,8 @@ const getHeaders = ({ accessToken }: { accessToken?: string }) => {
   return {
     // Authorization: `Bearer ${accessToken}`,
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Credentials": "true"
+    "Access-Control-Allow-Credentials": "true",
+    "Content-Type": "application/json",
   };
 };
 
@@ -31,20 +32,38 @@ export const httpRequest = async <T, D>(
     const customHeaders = getHeaders({
       accessToken: options?.accessToken,
     });
-    const response: AxiosResponse<T> = await axios({
+    // const response: AxiosResponse<T> = await axios({
+    //   method,
+    //   url,
+    //   headers: {
+    //     ...options?.headers,
+    //     ...customHeaders,
+    //   },
+    //   data,
+    //   withCredentials: true,
+    // });
+
+    const response: Response = await fetch(url, {
       method,
-      url,
       headers: {
         ...options?.headers,
         ...customHeaders,
       },
-      data,
+      body: data ? JSON.stringify(data) : undefined,
+      credentials: 'same-origin',
     });
+
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData: T = await response.json();
 
     return {
       ok: true,
       status: response.status,
-      data: response.data,
+      data: responseData,
     };
   } catch (error) {
     return {

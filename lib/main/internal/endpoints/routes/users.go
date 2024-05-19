@@ -20,7 +20,7 @@ func (e *Endpoints) UsersEndpoints() []endpoints.Endpoint {
 			Path:         "/users/session",
 			Method:       "GET",
 			Controller:   e.Controllers.Users.GetUserBySessionId,
-			RequiresAuth: false,
+			RequiresAuth: true,
 			Validation: endpoints.Validation{
 				Enable: false,
 				Entity: nil,

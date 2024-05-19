@@ -6,16 +6,6 @@ import (
 
 func (e *Endpoints) AuthEndpoints() []endpoints.Endpoint {
 	return []endpoints.Endpoint{
-		//{
-		//	Path:         "/auth/login",
-		//	Method:       "GET",
-		//	Controller:   e.Controllers.Auth.GetLoginPage,
-		//	RequiresAuth: false,
-		//	Validation: endpoints.Validation{
-		//		Enable: false,
-		//		Entity: nil,
-		//	},
-		//},
 		{
 			Path:         "/auth/google/callback",
 			Method:       "GET",
@@ -27,7 +17,7 @@ func (e *Endpoints) AuthEndpoints() []endpoints.Endpoint {
 			},
 		},
 		{
-			Path:         "/auth/logout/google",
+			Path:         "/auth/logout",
 			Method:       "GET",
 			Controller:   e.Controllers.Auth.Logout,
 			RequiresAuth: true,
@@ -37,7 +27,7 @@ func (e *Endpoints) AuthEndpoints() []endpoints.Endpoint {
 			},
 		},
 		{
-			Path:         "/auth/google",
+			Path:         "/auth/login",
 			Method:       "GET",
 			Controller:   e.Controllers.Auth.GetProvider,
 			RequiresAuth: false,
@@ -46,25 +36,5 @@ func (e *Endpoints) AuthEndpoints() []endpoints.Endpoint {
 				Entity: nil,
 			},
 		},
-		//{
-		//	Path:         "/auth/logout",
-		//	Method:       "POST",
-		//	Controller:   e.Controllers.Auth.Logout,
-		//	RequiresAuth: false,
-		//	Validation: endpoints.Validation{
-		//		Enable: false,
-		//		Entity: nil,
-		//	},
-		//},
 	}
 }
-
-//p.Get("/auth/{provider}", func(res http.ResponseWriter, req *http.Request) {
-//	// try to get the user without re-authenticating
-//	if gothUser, err := gothic.CompleteUserAuth(res, req); err == nil {
-//		t, _ := template.New("foo").Parse(userTemplate)
-//		t.Execute(res, gothUser)
-//	} else {
-//		gothic.BeginAuthHandler(res, req)
-//	}
-//})

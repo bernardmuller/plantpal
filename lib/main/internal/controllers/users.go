@@ -21,13 +21,13 @@ func (controller *UsersController) GetUserById(c echo.Context) error {
 }
 
 func (controller *UsersController) GetUserBySessionId(c echo.Context) error {
-	cookie, err := c.Cookie("plant_session")
-	if err != nil {
-		return c.String(http.StatusUnauthorized, "Plant session cookie not found")
-	}
-	fmt.Println(cookie.Name)
-	fmt.Println(cookie.Value)
-	return c.String(http.StatusOK, "read a cookie")
+	//cc := c.(*utils.CustomContext)
+	fmt.Println("getUserBySessionId")
+	//cookie, err := c.Cookie("plant_session")
+	//if err != nil {
+	//	return c.String(http.StatusUnauthorized, "Plant session cookie not found")
+	//}
+	//return c.String(http.StatusOK, "read a cookie")
 
 	//if err != nil {
 	//return c.String(http.StatusUnauthorized, "Unauthorized")
@@ -42,5 +42,6 @@ func (controller *UsersController) GetUserBySessionId(c echo.Context) error {
 	//	return c.String(http.StatusNotFound, "User not found")
 	//}
 	//
-	//return c.JSON(http.StatusOK, user)
+	return nil
+	//return c.JSON(http.StatusOK, {})
 }

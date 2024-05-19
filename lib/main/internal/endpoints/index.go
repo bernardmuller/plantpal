@@ -5,6 +5,7 @@ import (
 	"domain-app/internal/middleware"
 	"domain-app/internal/services"
 	"domain-app/internal/store/postgres"
+	"domain-app/internal/utils"
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
@@ -86,25 +87,35 @@ type Temp struct {
 func (f EndpointFactory) protectedRoute(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
+		fmt.Println("protected route: ", c.Request())
 		//q := c.Request().URL.Query()
 		//q.Add("provider", "google")
 		//c.Request().URL.RawQuery = q.Encode()
 		//
-		cookie, err := c.Request().Cookie("plant_session")
+		cookie, err := c.Cookie("plant_session")
 		if err != nil || cookie == nil {
-			fmt.Errorf("error: %v", err)
+
+			fmt.Println("1111: ", cookie)
+			return c.JSON(http.StatusUnauthorized, "Unauthorized")
 		}
+		fmt.Println("1: ")
 		parsedID, err := uuid.Parse(cookie.Value)
 		if err != nil {
 			http.Redirect(c.Response(), c.Request(), "/auth/login?error=unauthorized", http.StatusTemporaryRedirect)
 		}
-		fmt.Println("test")
+		fmt.Println("2")
 		_, err = services.AuthDBService{DB: f.ApiConfig.Database}.GetSessionById(c.Request().Context(), parsedID)
 		if err != nil {
 			http.Redirect(c.Response(), c.Request(), "/auth/login?error=unauthorized", http.StatusTemporaryRedirect)
 		}
+		fmt.Println("3")
 
-		return next(c)
+		cc := c.(*utils.CustomContext)
+		cc.Data = Temp{
+			UserId: "123",
+		}
+		fmt.Println("test protected route")
+		return next(cc)
 	}
 }
 
@@ -119,7 +130,7 @@ func (f EndpointFactory) createEndpoint(endpoint Endpoint) error {
 	var middlewareFunctions []echo.MiddlewareFunc
 	middlewareFunctions = append(middlewareFunctions, middleware.CreateCustomContext)
 	if endpoint.RequiresAuth {
-		middlewareFunctions = append(middlewareFunctions, protectedRoute)
+		middlewareFunctions = append(middlewareFunctions, f.protectedRoute)
 	}
 	f.ApiConfig.Router.Add(endpoint.Method, endpoint.Path, endpoint.Controller, middlewareFunctions...)
 	return nil

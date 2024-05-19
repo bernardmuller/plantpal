@@ -12,6 +12,7 @@
         initialData: data.plants || [],
     })
 
+
     const currentUser = data.currentUser
 
 </script>
