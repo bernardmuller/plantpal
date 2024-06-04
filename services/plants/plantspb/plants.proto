@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option go_package = "github.com/bernardmuller/plantpal/plants";
+
+service PlantsService {
+  rpc CreatePlant(CreatePlantRequest) returns (CreatePlantResponse) {}
+  rpc GetPlants(GetPlantsRequest) returns (GetPlantsResponse) {}
+}
+
+message Plant {
+  string ID = 1;
+  string Common = 2;
+  string Family = 3;
+  string CreatedAt = 4;
+  string UpdatedAt = 5;
+  string Latin = 6;
+  string Category = 7;
+  string Origin = 8;
+  string Climate = 9;
+  string TempMax = 10;
+  string TempMin = 11;
+  string IdealLight = 12;
+  string ToleratedLight = 13;
+  string Watering = 14;
+  string Insects = 15;
+  string Diseases = 16;
+  string Soil = 17;
+  string RepotPeriod = 18;
+  string Use = 19;
+}
+
+message CreatePlantRequest {
+  string Common = 2;
+  string Family = 3;
+}
+
+message CreatePlantResponse {
+  string status = 1;
+  Plant plant = 2;
+}
+
+message GetPlantsRequest {
+}
+
+message GetPlantsResponse {
+  repeated Plant plants = 1;
+}
