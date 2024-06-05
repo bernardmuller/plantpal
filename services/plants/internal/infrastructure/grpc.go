@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"github.com/bernardmuller/plantpal/internal/module"
 	"github.com/bernardmuller/plantpal/services/plants/internal/handler"
 	"github.com/bernardmuller/plantpal/services/plants/internal/service"
 	"github.com/bernardmuller/plantpal/store/postgres"
@@ -14,8 +15,8 @@ type Server struct {
 	DB   *postgres.Queries
 }
 
-func NewGrpcServer(addr string) *Server {
-	return &Server{addr: addr}
+func NewGrpcServer(config *module.ModuleConfig) *Server {
+	return &Server{addr: config.PORT.GRPC, DB: config.Database}
 }
 
 func (s *Server) Start() error {

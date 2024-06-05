@@ -4,7 +4,7 @@ option go_package = "github.com/bernardmuller/plantpal/plants";
 
 service PlantsService {
   rpc CreatePlant(CreatePlantRequest) returns (CreatePlantResponse) {}
-  rpc GetPlants(GetPlantsRequest) returns (GetPlantsResponse) {}
+  rpc GetAllPlants(GetPlantsRequest) returns (GetPlantsResponse) {}
 }
 
 message Plant {

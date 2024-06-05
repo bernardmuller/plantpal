@@ -1,7 +1,7 @@
 package infrastructure
 
 import (
-	"github.com/bernardmuller/plantpal/services/plants/internal/config"
+	"github.com/bernardmuller/plantpal/internal/module"
 	"github.com/bernardmuller/plantpal/services/plants/internal/handler"
 	"github.com/bernardmuller/plantpal/services/plants/internal/service"
 	"github.com/bernardmuller/plantpal/store/postgres"
@@ -14,8 +14,8 @@ type httpServer struct {
 	DB   *postgres.Queries
 }
 
-func NewHttpServer(config *config.ModuleConfig) *httpServer {
-	return &httpServer{addr: config.PORT, DB: config.Database}
+func NewHttpServer(config *module.ModuleConfig) *httpServer {
+	return &httpServer{addr: config.PORT.HTTP, DB: config.Database}
 }
 
 func (s *httpServer) Start() error {

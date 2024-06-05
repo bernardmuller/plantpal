@@ -4,22 +4,16 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/joho/godotenv"
-	"os"
-
 	_ "github.com/lib/pq"
 )
 
-func ConnectDB() (*Queries, error) {
+func ConnectDB(uri string) (*Queries, error) {
 	err := godotenv.Load()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load environment variables: %w", err)
-	}
-	uri := os.Getenv("POSTGRES_URI")
 	if uri == "" {
-		return nil, fmt.Errorf("POSTGRES_URI environment variables must be set")
+		return nil, fmt.Errorf("error: connecting to DB, POSTGRES_URI required")
 	}
-	conn, err2 := sql.Open("postgres", uri)
-	if err2 != nil {
+	conn, err := sql.Open("postgres", uri)
+	if err != nil {
 		return nil, fmt.Errorf("failed to open db %s: %w", uri, err)
 	}
 

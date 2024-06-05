@@ -1,16 +1,24 @@
 package main
 
 import (
-	"github.com/bernardmuller/plantpal/services/plants/internal/config"
+	"github.com/bernardmuller/plantpal/internal/module"
 	"github.com/bernardmuller/plantpal/services/plants/internal/infrastructure"
 )
 
 func main() {
-	moduleConfig := config.CreateConfig()
+	port := module.PORT{
+		HTTP: ":8001",
+		GRPC: ":9001",
+	}
+
+	moduleConfig, err := module.CreateConfig(port)
+	if err != nil {
+		panic(err)
+	}
 
 	httpServer := infrastructure.NewHttpServer(moduleConfig)
 	go httpServer.Start()
 
-	grpcServer := infrastructure.NewGrpcServer(":9000")
+	grpcServer := infrastructure.NewGrpcServer(moduleConfig)
 	grpcServer.Start()
 }

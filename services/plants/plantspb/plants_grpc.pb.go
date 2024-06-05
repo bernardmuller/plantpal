@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PlantsService_CreatePlant_FullMethodName = "/PlantsService/CreatePlant"
-	PlantsService_GetPlants_FullMethodName   = "/PlantsService/GetPlants"
+	PlantsService_CreatePlant_FullMethodName  = "/PlantsService/CreatePlant"
+	PlantsService_GetAllPlants_FullMethodName = "/PlantsService/GetAllPlants"
 )
 
 // PlantsServiceClient is the client API for PlantsService service.
@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PlantsServiceClient interface {
 	CreatePlant(ctx context.Context, in *CreatePlantRequest, opts ...grpc.CallOption) (*CreatePlantResponse, error)
-	GetPlants(ctx context.Context, in *GetPlantsRequest, opts ...grpc.CallOption) (*GetPlantsResponse, error)
+	GetAllPlants(ctx context.Context, in *GetPlantsRequest, opts ...grpc.CallOption) (*GetPlantsResponse, error)
 }
 
 type plantsServiceClient struct {
@@ -48,9 +48,9 @@ func (c *plantsServiceClient) CreatePlant(ctx context.Context, in *CreatePlantRe
 	return out, nil
 }
 
-func (c *plantsServiceClient) GetPlants(ctx context.Context, in *GetPlantsRequest, opts ...grpc.CallOption) (*GetPlantsResponse, error) {
+func (c *plantsServiceClient) GetAllPlants(ctx context.Context, in *GetPlantsRequest, opts ...grpc.CallOption) (*GetPlantsResponse, error) {
 	out := new(GetPlantsResponse)
-	err := c.cc.Invoke(ctx, PlantsService_GetPlants_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, PlantsService_GetAllPlants_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *plantsServiceClient) GetPlants(ctx context.Context, in *GetPlantsReques
 // for forward compatibility
 type PlantsServiceServer interface {
 	CreatePlant(context.Context, *CreatePlantRequest) (*CreatePlantResponse, error)
-	GetPlants(context.Context, *GetPlantsRequest) (*GetPlantsResponse, error)
+	GetAllPlants(context.Context, *GetPlantsRequest) (*GetPlantsResponse, error)
 	mustEmbedUnimplementedPlantsServiceServer()
 }
 
@@ -73,8 +73,8 @@ type UnimplementedPlantsServiceServer struct {
 func (UnimplementedPlantsServiceServer) CreatePlant(context.Context, *CreatePlantRequest) (*CreatePlantResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePlant not implemented")
 }
-func (UnimplementedPlantsServiceServer) GetPlants(context.Context, *GetPlantsRequest) (*GetPlantsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPlants not implemented")
+func (UnimplementedPlantsServiceServer) GetAllPlants(context.Context, *GetPlantsRequest) (*GetPlantsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllPlants not implemented")
 }
 func (UnimplementedPlantsServiceServer) mustEmbedUnimplementedPlantsServiceServer() {}
 
@@ -107,20 +107,20 @@ func _PlantsService_CreatePlant_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PlantsService_GetPlants_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _PlantsService_GetAllPlants_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPlantsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PlantsServiceServer).GetPlants(ctx, in)
+		return srv.(PlantsServiceServer).GetAllPlants(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PlantsService_GetPlants_FullMethodName,
+		FullMethod: PlantsService_GetAllPlants_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PlantsServiceServer).GetPlants(ctx, req.(*GetPlantsRequest))
+		return srv.(PlantsServiceServer).GetAllPlants(ctx, req.(*GetPlantsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -137,8 +137,8 @@ var PlantsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PlantsService_CreatePlant_Handler,
 		},
 		{
-			MethodName: "GetPlants",
-			Handler:    _PlantsService_GetPlants_Handler,
+			MethodName: "GetAllPlants",
+			Handler:    _PlantsService_GetAllPlants_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

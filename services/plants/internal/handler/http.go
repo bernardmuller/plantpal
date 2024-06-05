@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	"github.com/bernardmuller/plantpal/common/utils"
+	"github.com/bernardmuller/plantpal/internal/utils"
 	"github.com/bernardmuller/plantpal/services/plants/internal/service"
 	plants "github.com/bernardmuller/plantpal/services/plants/plantspb"
 	"github.com/google/uuid"
