@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/bernardmuller/plantpal/internal/module"
-	"github.com/bernardmuller/plantpal/services/plants/internal/infrastructure"
+	"github.com/bernardmuller/plantpal/services/plants-service/internal/infrastructure"
 )
 
 func main() {

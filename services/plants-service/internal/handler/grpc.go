@@ -3,12 +3,13 @@ package handler
 import (
 	"context"
 	"errors"
-	"github.com/bernardmuller/plantpal/services/plants/internal/service"
-	plants "github.com/bernardmuller/plantpal/services/plants/plantspb"
-	"github.com/google/uuid"
-	"google.golang.org/grpc"
 	"math/rand"
 	"time"
+
+	"github.com/bernardmuller/plantpal/services/plants-service/internal/service"
+	plants "github.com/bernardmuller/plantpal/services/plants-service/plantspb"
+	"github.com/google/uuid"
+	"google.golang.org/grpc"
 )
 
 type PlantsHandler struct {

@@ -3,15 +3,16 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/gorilla/mux"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net/http"
 	"text/template"
 	"time"
 
-	"github.com/bernardmuller/plantpal/services/plants/plantspb"
+	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+
+	plants "github.com/bernardmuller/plantpal/services/plants-service/plantspb"
 )
 
 type httpServer struct {

@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v5.26.1
-// source: plants/plantspb/plants.proto
+// source: plants-service/plantspb/plants.proto
 
-package plants
+package plants_service
 
 import (
 	context "context"
@@ -142,5 +142,5 @@ var PlantsService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "plants/plantspb/plants.proto",
+	Metadata: "plants-service/plantspb/plants.proto",
 }

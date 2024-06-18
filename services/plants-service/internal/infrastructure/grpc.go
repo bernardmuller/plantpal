@@ -1,13 +1,14 @@
 package infrastructure
 
 import (
-	"github.com/bernardmuller/plantpal/internal/module"
-	"github.com/bernardmuller/plantpal/services/plants/internal/handler"
-	"github.com/bernardmuller/plantpal/services/plants/internal/service"
-	"github.com/bernardmuller/plantpal/store/postgres"
-	"google.golang.org/grpc"
 	"log"
 	"net"
+
+	"github.com/bernardmuller/plantpal/internal/module"
+	"github.com/bernardmuller/plantpal/services/plants-service/internal/handler"
+	"github.com/bernardmuller/plantpal/services/plants-service/internal/service"
+	"github.com/bernardmuller/plantpal/store/postgres"
+	"google.golang.org/grpc"
 )
 
 type Server struct {

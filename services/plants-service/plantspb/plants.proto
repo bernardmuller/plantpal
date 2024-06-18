@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/bernardmuller/plantpal/plants";
+option go_package = "github.com/bernardmuller/plantpal/plants-service";
 
 service PlantsService {
   rpc CreatePlant(CreatePlantRequest) returns (CreatePlantResponse) {}

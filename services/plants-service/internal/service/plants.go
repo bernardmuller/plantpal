@@ -2,7 +2,8 @@ package service
 
 import (
 	"context"
-	plants "github.com/bernardmuller/plantpal/services/plants/plantspb"
+
+	plants "github.com/bernardmuller/plantpal/services/plants-service/plantspb"
 	"github.com/bernardmuller/plantpal/store/postgres"
 	"github.com/google/uuid"
 )

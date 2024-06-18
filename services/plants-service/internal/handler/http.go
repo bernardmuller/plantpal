@@ -3,12 +3,13 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	"github.com/bernardmuller/plantpal/internal/utils"
-	"github.com/bernardmuller/plantpal/services/plants/internal/service"
-	plants "github.com/bernardmuller/plantpal/services/plants/plantspb"
-	"github.com/google/uuid"
 	"net/http"
 	"time"
+
+	"github.com/bernardmuller/plantpal/internal/utils"
+	"github.com/bernardmuller/plantpal/services/plants-service/internal/service"
+	plants "github.com/bernardmuller/plantpal/services/plants-service/plantspb"
+	"github.com/google/uuid"
 )
 
 type PlantsHttpHandler struct {

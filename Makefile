@@ -1,7 +1,16 @@
 include .env
 
+docker-compose-build:
+	@docker compose -f docker/docker-compose.yml build --no-cache
+
+docker-compose-up:
+	@docker-compose -f docker/docker-compose.yml up -d
+
+docker-compose-down:
+	@docker-compose -f docker/docker-compose.yml down
+
 run-plants-service:
-	go run services/plants/main.go
+	go run services/plants-service/main.go
 
 run-web-service:
 	go run services/web/main.go
@@ -12,7 +21,7 @@ run-all-services:
 
 gen-plants:
 	@protoc \
-		--proto_path=services "services/plants/plantspb/plants.proto" \
+		--proto_path=services "services/plants-service/plantspb/plants.proto" \
 		--go_out=services --go_opt=paths=source_relative \
   		--go-grpc_out=services --go-grpc_opt=paths=source_relative
 
