@@ -9,6 +9,12 @@ docker-compose-up:
 docker-compose-down:
 	@docker-compose -f docker/docker-compose.yml down
 
+docker-build-plants-service:
+	@docker build -t plants-service -f docker/plants-service/Dockerfile .
+
+docker-build-web-service:
+	@docker build -t web-service -f docker/web/Dockerfile .
+
 run-plants-service:
 	go run services/plants-service/main.go
 
