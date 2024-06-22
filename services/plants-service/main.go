@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/bernardmuller/plantpal/internal/module"
 	"github.com/bernardmuller/plantpal/services/plants-service/internal/infrastructure"
 )
@@ -13,7 +15,7 @@ func main() {
 
 	moduleConfig, err := module.CreateConfig(port)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	httpServer := infrastructure.NewHttpServer(moduleConfig)

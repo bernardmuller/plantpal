@@ -10,16 +10,30 @@ docker-compose-down:
 	@docker-compose -f docker/docker-compose.yml down
 
 docker-build-plants-service:
-	@docker build -t plants-service -f docker/plants-service/Dockerfile .
+	@docker build -t plants-service -f docker/plants-service/Dockerfile --build-arg POSTGRES_URI={POSTGRES_URI} .
 
 docker-build-web-service:
 	@docker build -t web-service -f docker/web/Dockerfile .
 
+docker-build-all-services:
+	@echo "Building all services..."
+	@make docker-build-plants-service & make docker-build-web-service
+
+docker-run:
+	@make docker-build-all-services
+	@echo "Running all services..."
+	@make run-local-db
+	@docker run -dp 8001:8001 plants-service
+	@docker run -dp 8000:8000 web-service
+
+run-local-db:
+	@cd ./docker/local && docker-compose up -d
+
 run-plants-service:
-	go run services/plants-service/main.go
+	@go run services/plants-service/main.go
 
 run-web-service:
-	go run services/web/main.go
+	@go run services/web/main.go
 
 run-all-services:
 	@echo "Running all services..."

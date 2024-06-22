@@ -2,9 +2,10 @@ package module
 
 import (
 	"errors"
+	"os"
+
 	"github.com/bernardmuller/plantpal/internal/utils"
 	"github.com/bernardmuller/plantpal/store/postgres"
-	"os"
 )
 
 type PORT struct {
@@ -20,7 +21,7 @@ type ModuleConfig struct {
 func CreateConfig(port PORT) (*ModuleConfig, error) {
 	err := utils.InitEnv()
 	if err != nil {
-		return nil, errors.New("Failed to iniitialize environment.")
+		return nil, err
 	}
 	uri := os.Getenv("POSTGRES_URI")
 	if uri == "" {
