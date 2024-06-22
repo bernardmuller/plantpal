@@ -19,10 +19,13 @@ type ModuleConfig struct {
 }
 
 func CreateConfig(port PORT) (*ModuleConfig, error) {
-	err := utils.InitEnv()
-	if err != nil {
-		return nil, err
+	if os.Getenv("env") == "development" {
+		err := utils.InitEnv()
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	uri := os.Getenv("POSTGRES_URI")
 	if uri == "" {
 		return nil, errors.New("POSTGRES_URI not set in environment.")
