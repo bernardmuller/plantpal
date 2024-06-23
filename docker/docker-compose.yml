@@ -7,8 +7,8 @@ services:
         environment:
             DATABASE_URL: postgresql://postgres:password@0.0.0.0:6543/postgres?sslmode=disable
         build:
-            context: .
-            dockerfile: ./plants-service/Dockerfile
+            context: ./plants-service
+            dockerfile: ./Dockerfile
         ports:
             - "8001:8001"
             - "9001:9001"
@@ -17,7 +17,7 @@ services:
         image: web-service
         container_name: web-service
         build:
-            context: .
-            dockerfile: ./web/Dockerfile
+            context: ./web
+            dockerfile: ./Dockerfile
         ports:
             - "8000:8000"

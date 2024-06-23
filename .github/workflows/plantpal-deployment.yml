@@ -1,4 +1,4 @@
-name: Domain App Pipeline
+name: Plantpal Deployment Pipeline
 on:
     push:
         branches:
@@ -25,8 +25,6 @@ jobs:
                   file: ./docker/plants-service/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantpal-plants-service:latest
-                  build-args: |
-                      "POSTGRES_URI=${{ secrets.POSTGRES_URI }}"
 
             - name: Build and push Web Service
               uses: docker/build-push-action@v5
@@ -35,7 +33,6 @@ jobs:
                   file: ./docker/web/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantpal-web-service:latest
-
 
     build_and_test:
         name: Build and run tests
@@ -49,7 +46,6 @@ jobs:
               uses: actions/setup-go@v2
               with:
                   go-version: 1.22
-
 #            - name: Build
 #              run: cd ./lib/main && go build -o domain-app
 #
