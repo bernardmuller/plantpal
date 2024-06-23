@@ -13,7 +13,7 @@ docker-build-plants-service:
 	@docker build -t plants-service -f docker/plants-service/Dockerfile --build-arg POSTGRES_URI={POSTGRES_URI} .
 
 docker-build-web-service:
-	@docker build -t web-service -f docker/web/Dockerfile ./client/web
+	@docker build -t web-service -f docker/web/Dockerfile ./client/web --no-cache
 
 docker-build-all-services:
 	@echo "Building all services..."
@@ -31,9 +31,6 @@ run-local-db:
 
 run-plants-service:
 	@go run services/plants-service/main.go
-
-run-web-service:
-	@go run services/web/main.go
 
 run-all-services:
 	@echo "Running all services..."
