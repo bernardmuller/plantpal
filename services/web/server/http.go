@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"text/template"
 	"time"
 
@@ -19,10 +20,12 @@ type httpServer struct {
 	addr string
 }
 
+type Host string
+
 func NewGRPCClient(addr string) *grpc.ClientConn {
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		fmt.Println("did not connect: %v", err)
 	}
 
 	return conn
@@ -36,7 +39,15 @@ func (s *httpServer) Run() error {
 	//router := http.NewServeMux()
 	router := mux.NewRouter()
 
-	conn := NewGRPCClient(":9001")
+	var host Host
+	if os.Getenv("ENV") != "production" {
+		host = "127.0.0.1" // Use localhost for production
+	} else {
+		host = "0.0.0.0" // Use any available address for non-production
+	}
+
+	conStr := fmt.Sprintf("%s:9001", host)
+	conn := NewGRPCClient(conStr)
 	defer conn.Close()
 	//m := mux.NewRouter()
 
@@ -48,13 +59,13 @@ func (s *httpServer) Run() error {
 
 		ps, err := c.GetAllPlants(ctx, &plants.GetPlantsRequest{})
 		if err != nil {
-			log.Fatalf("client error: %v", err)
+			fmt.Println("client error: %v", err)
 		}
 
 		t := template.Must(template.ParseFiles("services/web/views/layouts/main.html", "services/web/views/pages/plants.tmpl.html"))
 
 		if err := t.Execute(w, ps.Plants); err != nil {
-			log.Fatalf("template error: %v", err)
+			fmt.Println("template error: %v", err)
 		}
 	})
 
@@ -71,7 +82,7 @@ func (s *httpServer) Run() error {
 
 		ps, err := c.GetAllPlants(ctx, &plants.GetPlantsRequest{})
 		if err != nil {
-			log.Fatalf("client error: %v", err)
+			fmt.Println("client error: %v", err)
 		}
 
 		var plant *plants.Plant
@@ -84,35 +95,10 @@ func (s *httpServer) Run() error {
 		t := template.Must(template.ParseFiles("services/web/views/layouts/main.html", "services/web/views/pages/plant.tmpl.html"))
 
 		if err := t.Execute(w, plant); err != nil {
-			log.Fatalf("template error: %v", err)
+			fmt.Println("template error: %v", err)
 		}
 	})
 
 	log.Println("Starting server on", s.addr)
 	return http.ListenAndServe(s.addr, router)
 }
-
-var ordersTemplate = `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Plants</title>
-</head>
-<body>
-    <h1>Plants List</h1>
-    <table border="1">
-        <tr>
-            <th>Plant ID</th>
-            <th>Common Name</th>
-            <th>Family</th>
-        </tr>
-        {{range .}}
-        <tr>
-            <td>{{.ID}}</td>
-            <td>{{.Common}}</td>
-            <td>{{.Family}}</td>
-        </tr>
-        {{end}}
-    </table>
-</body>
-</html>`
