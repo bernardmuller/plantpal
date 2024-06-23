@@ -26,13 +26,13 @@ jobs:
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantpal-plants-service:latest
 
-            - name: Build and push Web Service
+            - name: Build and push Web App
               uses: docker/build-push-action@v5
               with:
                   context: ./
                   file: ./docker/web/Dockerfile
                   push: true
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantpal-web-service:latest
+                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantpal-web-app:latest
 
     build_and_test:
         name: Build and run tests

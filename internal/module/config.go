@@ -19,7 +19,7 @@ type ModuleConfig struct {
 }
 
 func CreateConfig(port PORT) (*ModuleConfig, error) {
-	if os.Getenv("env") == "development" {
+	if os.Getenv("ENV") != "production" {
 		err := utils.InitEnv()
 		if err != nil {
 			return nil, err

@@ -13,7 +13,7 @@ docker-build-plants-service:
 	@docker build -t plants-service -f docker/plants-service/Dockerfile --build-arg POSTGRES_URI={POSTGRES_URI} .
 
 docker-build-web-service:
-	@docker build -t web-service -f docker/web/Dockerfile .
+	@docker build -t web-service -f docker/web/Dockerfile ./client/web
 
 docker-build-all-services:
 	@echo "Building all services..."

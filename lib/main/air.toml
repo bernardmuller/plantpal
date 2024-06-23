@@ -1,9 +1,0 @@
-# air.toml
-root = "."
-tmp_dir = "tmp"
-build_cmd = "cd ./internal templ generate && go build -o ./tmp/main ."
-run_cmd = "./tmp/main"
-binary_name = "main"
-exclude_file = ["tmp", "vendor"]
-include_ext = ["go", "tpl", "templ"]
-
