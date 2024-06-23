@@ -36,4 +36,5 @@ COPY --from=prerelease /usr/src/app/package.json .
 
 # run the app
 EXPOSE 4173
-CMD [ "bun", "preview", "--port", "4173", "--host", "0.0.0.0"]
+EXPOSE 8000
+CMD [ "bun", "preview", "--", "--host"]
