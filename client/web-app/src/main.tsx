@@ -1,10 +1,24 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import { Container, createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./index.css";
+import Home from "./pages/home";
+import homeLoader from "./lib/http/loaders/home";
+import PlantDetailPage from "./pages/plants/detail";
+import plantDetailLoader from "./lib/http/loaders/plants-detail";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+const router = createBrowserRouter([
+	{
+		path: "/",
+		element: <Home />,
+		loader: homeLoader,
+	},
+	{
+		path: "/plants/:plantId",
+		element: <PlantDetailPage />,
+		loader: plantDetailLoader,
+	},
+]);
+
+createRoot(document.getElementById("root") as Container).render(
+	<RouterProvider router={router} />
+);

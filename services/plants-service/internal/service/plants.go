@@ -39,3 +39,8 @@ func (s *PlantsService) GetAllPlants(ctx context.Context) ([]postgres.Plant, err
 	}
 	return plants, nil
 }
+
+func (s *PlantsService) GetPlantById(ctx context.Context, id uuid.UUID) (postgres.Plant, error) {
+	plant, _ := s.DB.GetPlantByID(ctx, id)
+	return plant, nil
+}

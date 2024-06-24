@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/bernardmuller/plantpal/services/plants-service/internal/service"
 	plants "github.com/bernardmuller/plantpal/services/plants-service/plantspb"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 type PlantsHttpHandler struct {
@@ -27,6 +29,7 @@ func NewHttpPlantsHandler(plantService *service.PlantsService) *PlantsHttpHandle
 func (h *PlantsHttpHandler) RegisterRouter(router *http.ServeMux) {
 	router.HandleFunc("POST /plants", h.CreatePlant)
 	router.HandleFunc("GET /plants", h.GetPlants)
+	router.HandleFunc("GET /plants/{plantId}", h.GetPlantById)
 }
 
 func (h *PlantsHttpHandler) CreatePlant(w http.ResponseWriter, r *http.Request) {
@@ -101,4 +104,26 @@ func (h *PlantsHttpHandler) GetPlants(w http.ResponseWriter, r *http.Request) {
 		Plants: plantsSlice,
 	}
 	utils.WriteJSON(w, http.StatusOK, res)
+}
+
+func (h *PlantsHttpHandler) GetPlantById(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	plantIdStr := vars["plantId"]
+	plantId, err := uuid.Parse(plantIdStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Invalid plant ID format"))
+		return
+	}
+	p, err := h.plantsService.GetPlantById(r.Context(), plantId)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	// var plant plants.Plant
+
+	// res := &plants.GetPlantResponse{
+	// 	Plant: p,
+	// }
+	utils.WriteJSON(w, http.StatusOK, p)
 }
