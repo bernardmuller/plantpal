@@ -29,8 +29,8 @@ jobs:
             - name: Build and push Web App
               uses: docker/build-push-action@v5
               with:
-                  context: ./client/web
-                  file: ./docker/web/Dockerfile
+                  context: ./client/web-app
+                  file: ./docker/web-app/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/plantpal-web-app:latest
 

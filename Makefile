@@ -15,6 +15,9 @@ docker-build-plants-service:
 docker-build-web-service:
 	@docker build -t web-service -f docker/web/Dockerfile ./client/web --no-cache
 
+docker-build-web-app:
+	@docker build -t web-app -f docker/web-app/Dockerfile ./client/web-app --no-cache
+
 docker-build-all-services:
 	@echo "Building all services..."
 	@make docker-build-plants-service & make docker-build-web-service
