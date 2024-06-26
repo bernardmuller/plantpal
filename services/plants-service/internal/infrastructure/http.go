@@ -8,6 +8,8 @@ import (
 	"github.com/bernardmuller/plantpal/services/plants-service/internal/handler"
 	"github.com/bernardmuller/plantpal/services/plants-service/internal/service"
 	"github.com/bernardmuller/plantpal/store/postgres"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type httpServer struct {
@@ -38,16 +40,34 @@ func NewHttpServer(config *module.ModuleConfig) *httpServer {
 	return &httpServer{addr: config.PORT.HTTP, DB: config.Database}
 }
 
+func CreateRouter() *echo.Echo {
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+		AllowHeaders: []string{
+			echo.HeaderOrigin,
+			echo.HeaderContentType,
+			echo.HeaderAccept,
+			echo.HeaderAccessControlAllowOrigin,
+			echo.HeaderAccessControlAllowCredentials,
+		},
+	}))
+	e.Static("/static/images", "images")
+	e.Static("/static/css", "css")
+
+	return e
+}
+
 func (s *httpServer) Start() error {
-	router := http.NewServeMux()
+	router := CreateRouter()
 
 	plantService := service.NewPlantsService(s.DB)
 	plantHandler := handler.NewHttpPlantsHandler(plantService)
 	plantHandler.RegisterRouter(router)
-	// Wrap the router with the CORS middleware
-	corsRouter := corsMiddleware(router)
 
 	log.Println("Starting server on", s.addr)
 
-	return http.ListenAndServe(s.addr, corsRouter)
+	return http.ListenAndServe(s.addr, router)
 }

@@ -2,16 +2,13 @@ package handler
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/bernardmuller/plantpal/internal/utils"
 	"github.com/bernardmuller/plantpal/services/plants-service/internal/service"
 	plants "github.com/bernardmuller/plantpal/services/plants-service/plantspb"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
 )
 
 type PlantsHttpHandler struct {
@@ -26,53 +23,48 @@ func NewHttpPlantsHandler(plantService *service.PlantsService) *PlantsHttpHandle
 	}
 }
 
-func (h *PlantsHttpHandler) RegisterRouter(router *http.ServeMux) {
-	router.HandleFunc("POST /plants", h.CreatePlant)
-	router.HandleFunc("GET /plants", h.GetPlants)
-	router.HandleFunc("GET /plants/{plantId}", h.GetPlantById)
+func (h *PlantsHttpHandler) RegisterRouter(router *echo.Echo) {
+	router.POST("/plants", h.CreatePlant)
+	router.GET("/plants", h.GetPlants)
+	router.GET("/plants/:id", h.GetPlantById)
 }
 
-func (h *PlantsHttpHandler) CreatePlant(w http.ResponseWriter, r *http.Request) {
+func (h *PlantsHttpHandler) CreatePlant(c echo.Context) error {
 	var plant plants.Plant
 
-	err := json.NewDecoder(r.Body).Decode(&plant)
+	err := json.NewDecoder(c.Request().Body).Decode(&plant)
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, err)
-		return
+		return c.String(http.StatusInternalServerError, "Error decoding request body plants")
 	}
 
 	if len(plant.Common) == 0 {
-		utils.WriteError(w, http.StatusBadRequest, errors.New("Common name is required"))
-		return
+		return c.String(http.StatusBadRequest, "Common name is required")
 	}
 
 	if len(plant.Family) == 0 {
-		utils.WriteError(w, http.StatusBadRequest, errors.New("Family name is required"))
-		return
+		return c.String(http.StatusBadRequest, "Family name is required")
 	}
 
 	plant.ID = uuid.New().String()
 	plant.CreatedAt = time.Now().String()
 	plant.UpdatedAt = time.Now().String()
 
-	_, err = h.plantsService.CreatePlant(r.Context(), &plant)
+	_, err = h.plantsService.CreatePlant(c.Request().Context(), &plant)
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
-		return
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	res := &plants.CreatePlantResponse{
 		Status: "success",
 		Plant:  &plant,
 	}
-	utils.WriteJSON(w, http.StatusOK, res)
+	return c.JSON(http.StatusCreated, res)
 }
 
-func (h *PlantsHttpHandler) GetPlants(w http.ResponseWriter, r *http.Request) {
-	ps, err := h.plantsService.GetAllPlants(r.Context())
+func (h *PlantsHttpHandler) GetPlants(c echo.Context) error {
+	ps, err := h.plantsService.GetAllPlants(c.Request().Context())
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
-		return
+		return c.String(http.StatusNoContent, err.Error())
 	}
 
 	plantsSlice := make([]*plants.Plant, len(ps))
@@ -103,27 +95,22 @@ func (h *PlantsHttpHandler) GetPlants(w http.ResponseWriter, r *http.Request) {
 	res := &plants.GetPlantsResponse{
 		Plants: plantsSlice,
 	}
-	utils.WriteJSON(w, http.StatusOK, res)
+	// utils.WriteJSON(w, http.StatusOK, res)
+	return c.JSON(http.StatusOK, res)
 }
 
-func (h *PlantsHttpHandler) GetPlantById(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	plantIdStr := vars["plantId"]
+func (h *PlantsHttpHandler) GetPlantById(c echo.Context) error {
+	plantIdStr := c.Param("id")
+
 	plantId, err := uuid.Parse(plantIdStr)
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Invalid plant ID format"))
-		return
+		return c.String(http.StatusBadRequest, err.Error())
 	}
-	p, err := h.plantsService.GetPlantById(r.Context(), plantId)
+
+	p, err := h.plantsService.GetPlantById(c.Request().Context(), plantId)
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
-		return
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	// var plant plants.Plant
-
-	// res := &plants.GetPlantResponse{
-	// 	Plant: p,
-	// }
-	utils.WriteJSON(w, http.StatusOK, p)
+	return c.JSON(http.StatusOK, p)
 }

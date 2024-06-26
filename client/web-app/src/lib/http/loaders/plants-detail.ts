@@ -8,6 +8,5 @@ export default async function plantDetailLoader({
 	const url = new URL(request.url);
 	const plantId = url.pathname.split("/")[2];
 	const plantsResponse = await getPlantById(plantId);
-	console.log(plantsResponse);
-	return { plants: plantsResponse.data ?? null };
+	return { plant: plantsResponse.data ?? null };
 }

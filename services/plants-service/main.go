@@ -19,8 +19,8 @@ func main() {
 	}
 
 	httpServer := infrastructure.NewHttpServer(moduleConfig)
-	go httpServer.Start()
+	httpServer.Start()
 
-	grpcServer := infrastructure.NewGrpcServer(moduleConfig)
-	grpcServer.Start()
+	// grpcServer := infrastructure.NewGrpcServer(moduleConfig)
+	// grpcServer.Start()
 }
